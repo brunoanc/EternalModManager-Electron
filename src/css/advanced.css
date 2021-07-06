@@ -1,0 +1,100 @@
+body {
+    font-family: 'Segoe UI', monospace;
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.left {
+    width: 42.5%;
+    height: 270px;
+    margin: 15px 0 0 15px;
+    vertical-align: center;
+    align-items: center;
+}
+
+.left button {
+    height: 33px;
+    width: 90%;
+    margin: 5px 9px 5px 0;
+}
+
+.left button:hover {
+    cursor: pointer;
+    background: rgb(192, 228, 245);
+    border: 1px solid rgb(105, 103, 103);
+    border-radius: 3px;
+}
+
+.right {
+    width: 57%;
+    height: 280px;
+}
+
+#vl {
+    background: rgb(236, 233, 233);
+    width: 0.5%;
+    height: 280px;
+}
+
+.injector-header {
+    padding: 2px 0 0 15px;
+}
+
+.checkbox-list ul {
+    padding: 8px 0 0 15px;
+    margin: 0;
+}
+
+.checkbox-list li {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    padding: 3px 0;
+}
+
+.checkbox-list input {
+    margin: 0;
+    padding: 0;
+}
+
+.game-args {
+    padding: 10px 0 10px 15px;
+}
+
+.game-args p {
+    padding: 0;
+    margin: 0;
+}
+
+#args-input {
+    height: 17px;
+    width: 285px;
+    margin: 5px 0 0 0;
+    border: 1px solid rgb(150, 149, 149);;
+}
+
+#args-input:hover {
+    border: 1px solid rgb(125, 187, 216);
+    border-radius: 2px;
+}
+
+#args-input:focus {
+    border: 1px solid rgb(125, 187, 216);
+    border-radius: 2px;
+    outline: none;
+}
+
+#save-button {
+    height: 33px;
+    width: 291px;
+    margin: 5px 0 10px 15px;
+}
+
+#save-button:hover {
+    cursor: pointer;
+    background: rgb(192, 228, 245);
+    border: 1px solid rgb(105, 103, 103);
+    border-radius: 3px;
+}

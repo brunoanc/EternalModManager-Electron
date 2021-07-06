@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>EternalModManager</title>
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+    <body>
+        <div class="top">
+            <span class="top-left">Mod list (drag and drop .zip files to install mods)</span>
+            <span class="top-right">
+                <input id="top-right-checkbox" type="checkbox">
+                <label for="top-right-checkbox" id="checkbox-text">&nbspEnable/Disable All</label>
+            </span>
+        </div>
+        <div class="middle-top">
+            <ul id="mods-list"></ul>
+        </div>
+        <div class="middle-bottom">
+            <strong>Selected mod information:</strong>
+            <div class="mod-info">
+                Name: <br>
+                <div id="mod-name">-</div>
+                Author(s): <br>
+                <div id="mod-author">-</div>
+                Description: <br>
+                <div id="mod-description">-</div>
+                Version: <br>
+                <div id="mod-version">-</div>
+                Min. required mod loader version: <br>
+                <div id="mod-min-version">-</div>
+                Load priority: <br>
+                <div id="mod-load-priority">-</div>
+            </div>
+        </div>
+        <hr>
+        <div class="bottom">
+            <button id="launch-button"><strong>Run mod injector</strong></button>
+            <button id="advanced-button">Advanced options...</button>
+        </div>
+        <script src="../js/index.js"></script>
+    </body>
+</html>

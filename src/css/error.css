@@ -1,0 +1,54 @@
+body {
+    font-family: 'Segoe UI', monospace;
+    font-size: 12px;
+}
+
+.error-div {
+    display: flex;
+}
+
+#left {
+    float: left;
+    height: 100px;
+    width: auto;
+}
+
+span {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#left img {
+    vertical-align: middle;
+}
+
+#right {
+    float: right;
+    height: 100px;
+    width: auto;
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+button {
+    float: right;
+    width: 86px;
+    height: 24px;
+}
+
+#ok-button {
+    position: absolute;
+    top: 115px;
+    left: 255px;
+}
+
+button:hover {
+    cursor: pointer;
+    background: rgb(192, 228, 245);
+    border: 1px solid rgb(105, 103, 103);
+    border-radius: 3px;
+}

@@ -1,0 +1,116 @@
+body {
+    font-family: 'Segoe UI', monospace;
+    font-size: 12px;
+}
+
+.top {
+    display: box;
+    overflow: hidden;
+    padding: 0 0 8px 0;
+}
+
+.top-left {
+    float: left;
+    padding: 0 0 0 18px;
+}
+
+.top-right {
+    float: right;
+    padding: 0 18px 0 0;
+    display: flex;
+    align-items: center;
+}
+
+.top-right input {
+    width: auto;
+    margin: 0;
+    padding: 0 0 0 0;
+}
+
+.middle-top {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 0 auto;
+    height: 275px;
+    width: 555px;
+    border: 1px solid;
+    border-color: rgb(173, 171, 171);
+}
+
+#mods-list {
+    margin: 0;
+    padding: 0.7px 0 7px 0;
+}
+
+#mods-list li {
+    list-style-type: none;
+}
+
+.mod-button {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    height: 20px;
+    width: 100%;
+    background: white;
+    border: 0;
+    padding: 0 3px;
+    display: flex;
+    align-items: center;
+}
+
+.mod-button:hover {
+    cursor: default;
+    background: rgb(217, 238, 248);
+}
+
+.mod-button:focus {
+    background: rgb(192, 228, 245);
+    border: 1px solid rgb(177, 177, 236);
+}
+
+.mod-button input {
+    margin: 0 5px 0 0;
+}
+
+.middle-bottom {
+    padding: 11px 12px 0 12px;
+}
+
+.mod-info {
+    padding: 7px 0;
+}
+
+.mod-info div {
+    padding: 7px 9px;
+    font-style: italic;
+    overflow: hidden;
+}
+
+#mod-description {
+    height: 62px;
+    width: auto;
+}
+
+hr {
+    border: 1px solid rgb(236, 233, 233);
+}
+
+.bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.bottom button {
+    height: 30px;
+    width: 45%;
+    margin: 10px 20px 10px 20px;
+}
+
+.bottom button:hover {
+    cursor: pointer;
+    background: rgb(192, 228, 245);
+    border: 1px solid rgb(105, 103, 103);
+    border-radius: 3px;
+}
