@@ -1,6 +1,7 @@
 const path = require('path')
 const { app, ipcMain, shell, BrowserWindow } = require('electron')
 const fs = require('fs')
+const { spawn } = require('child_process')
 
 const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.' // Get app's path
 const injectorPath = process.platform == 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh')
@@ -130,8 +131,26 @@ app.on('window-all-closed', () => {
 
 // Launch script before exiting, if specified
 app.on('will-quit', () => {
-    if (launchInjector)
-        shell.openPath(injectorPath)
+    if (launchInjector) {
+        var command = ''
+        var arguments = []
+
+        if (process.platform == 'win32') {
+            command = 'start'
+            arguments = [ 'cmd.exe', '/c', path.resolve(injectorPath) ]
+        }
+        else {
+            command = 'bash'
+            arguments = [ path.resolve(injectorPath) ]
+        }
+
+        spawn(command, arguments, {
+            cwd: process.cwd(),
+            detached: true,
+            shell: true,
+            stdio: "inherit"
+        })
+    }
 })
 
 // Close current window
