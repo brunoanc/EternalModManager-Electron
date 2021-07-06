@@ -45,8 +45,22 @@ function getZipsInDirectory(directory) {
 // Get all mods in given directory and add them to the mod list
 function getMods() {
     const fragment = document.createDocumentFragment()
+    const mods = []
 
     getZipsInDirectory(modsPath).forEach((modFile) => {
+        mods.push([ modFile, 'mod' ])
+    })
+
+    getZipsInDirectory(disabledModsPath).forEach((modFile) => {
+        mods.push([ modFile, 'disabled-mod' ])
+    })
+
+    mods.sort((a, b) => {
+        return a[0].toLowerCase().localeCompare(b[0].toLowerCase())
+    })
+
+    mods.forEach((mod) => {
+        var modFile = mod[0]
         var modInfo
         
         try {
@@ -59,7 +73,7 @@ function getMods() {
                 
             }
             else {
-                throw 'Error'
+                throw new Error('Error')
             }
         }
         catch (err) {
@@ -68,8 +82,8 @@ function getMods() {
 
         var checkbox = document.createElement('input')
         checkbox.type = 'checkbox'
-        checkbox.className = 'mod'
-        checkbox.checked = true
+        checkbox.className = mod[1]
+        checkbox.checked = mod[1] == 'mod' ? true : false
 
         checkbox.addEventListener('change', (event) => {
             if (event.currentTarget.checked) {
@@ -110,75 +124,6 @@ function getMods() {
             document.getElementById('mod-load-priority').innerHTML = modInfo.loadPriority
         })
         
-        var mod = document.createElement('li')
-        mod.appendChild(button)
-        fragment.appendChild(mod)
-    })
-
-    getZipsInDirectory(disabledModsPath).forEach((modFile) => {
-        var modInfo
-        
-        try {
-            var zip = new admZip(path.join(disabledModsPath, modFile))
-            var zipEntry = zip.getEntry('EternalMod.json')
-
-            if (zipEntry) {
-                var json = JSON.parse(zip.readAsText(zipEntry))
-                modInfo = new ModInfo(json.name, json.author, json.description, json.version, json.loadPriority, json.requiredVersion)
-                
-            }
-            else {
-                throw 'Error'
-            }
-        }
-        catch (err) {
-            modInfo = new ModInfo(modFile, null, null, null, null, null)
-        }
-
-        var checkbox = document.createElement('input')
-        checkbox.type = 'checkbox'
-        checkbox.className = 'disabled-mod'
-        checkbox.checked = false
-
-        checkbox.addEventListener('change', (event) => {
-            if (event.currentTarget.checked) {
-                try {
-                    fs.rename(path.join(disabledModsPath, modFile), path.join(modsPath, modFile), (err) => {
-                        if (err)
-                            throw err
-                    })
-                }
-                catch (err) {
-                    event.currentTarget.checked = false
-                }
-            }
-            else {
-                try {
-                    fs.rename(path.join(modsPath, modFile), path.join(disabledModsPath, modFile), (err) => {
-                        if (err)
-                            throw err
-                    })
-                }
-                catch (err) {
-                    event.currentTarget.checked = true
-                }
-            }
-        })
-
-        var button = document.createElement('button')
-        button.className = 'mod-button'
-        button.appendChild(checkbox)
-        button.appendChild(document.createTextNode(modFile))
-
-        button.addEventListener('click', () => {
-            document.getElementById('mod-name').innerHTML = modInfo.name
-            document.getElementById('mod-author').innerHTML = modInfo.author
-            document.getElementById('mod-description').innerHTML = modInfo.description
-            document.getElementById('mod-version').innerHTML = modInfo.version
-            document.getElementById('mod-min-version').innerHTML = modInfo.requiredVersion
-            document.getElementById('mod-load-priority').innerHTML = modInfo.loadPriority
-        })
-
         var mod = document.createElement('li')
         mod.appendChild(button)
         fragment.appendChild(mod)
