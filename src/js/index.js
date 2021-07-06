@@ -9,6 +9,7 @@ const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_E
 const modsPath = path.join(appPath, 'Mods')
 const disabledModsPath = path.join(appPath, 'DisabledMods')
 
+// Class containing mod info
 class ModInfo {
     constructor(name, author, description, version, loadPriority, requiredVersion) {
         this.name = name ? name : ''
@@ -20,6 +21,7 @@ class ModInfo {
     }
 }
 
+// Get all zip files in given directory
 function getZipsInDirectory(directory) {
     const zips = []
 
@@ -40,6 +42,7 @@ function getZipsInDirectory(directory) {
     return zips
 }
 
+// Get all mods in given directory and add them to the mod list
 function getMods() {
     const fragment = document.createDocumentFragment()
 
@@ -189,6 +192,7 @@ function getMods() {
     modsList.appendChild(fragment)
 }
 
+// Create the mod directories
 function makeModDirectories() {
     if (!fs.existsSync(modsPath))
         fs.mkdirSync(modsPath)
@@ -197,6 +201,7 @@ function makeModDirectories() {
         fs.mkdirSync(disabledModsPath)
 }
 
+// Init the directory watcher to check for changes in the mod folders
 function initWatcher() {
     makeModDirectories()
 
@@ -222,6 +227,7 @@ function initWatcher() {
     })
 }
 
+// Add functionality to 'Enable/Disable All' checkbox
 function initCheckList() {
     const mods = document.getElementsByClassName('mod')
     const disabledMods = document.getElementsByClassName('disabled-mod')
@@ -245,6 +251,7 @@ function initCheckList() {
     })
 }
 
+// Add mod drag-n-drop functionality
 function initDragAndDrop() {
     dragDrop('body', (files) => {
         files.forEach((file) => {
@@ -256,6 +263,7 @@ function initDragAndDrop() {
     })
 }
 
+// Init the two main buttons
 function initButtons() {
     document.getElementById('launch-button').addEventListener('click', () => {
         ipcRenderer.send('launch-script')
@@ -272,6 +280,7 @@ function initButtons() {
     })
 }
 
+// Change HTML title
 document.title += ` v${require(path.join(__dirname, '..', '..', 'package.json')).version} by PowerBall253`
 
 initWatcher()

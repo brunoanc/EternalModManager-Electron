@@ -2,12 +2,13 @@ const path = require('path')
 const { app, ipcMain, shell, BrowserWindow } = require('electron')
 const fs = require('fs')
 
-const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.' // Get app's path
 const injectorPath = process.platform == 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh')
 var launchInjector = false
 var errorType = ''
 var mainWindow
 
+// Create main window
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 610,
@@ -25,6 +26,7 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, 'html', 'index.html'))
 }
 
+// Create 'Advanced Info' window
 function createAdvancedWindow() {
     const win = new BrowserWindow({
         parent: mainWindow,
@@ -49,6 +51,7 @@ function createAdvancedWindow() {
     win.loadFile(path.join(__dirname, 'html', 'advanced.html'))
 }
 
+// Create new info/warning/error window
 function newInfoWindow(parent) {
     return new BrowserWindow({
         parent: parent ? parent : BrowserWindow.getFocusedWindow(),
@@ -66,6 +69,7 @@ function newInfoWindow(parent) {
     })
 }
 
+// Load main process window
 function loadMainWindow() {
     if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
         createWindow()
@@ -78,6 +82,7 @@ function loadMainWindow() {
     }
 }
 
+// Create info window and set attributes
 function createInfoWindow(send) {
     const win = newInfoWindow()
 
@@ -90,6 +95,7 @@ function createInfoWindow(send) {
     errorType = send
 }
 
+// Get backup files to restore/delete
 function getBackups(dirPath, backups) {
     backups = backups ? backups : []
 
@@ -107,6 +113,7 @@ function getBackups(dirPath, backups) {
     return backups
 }
 
+// Load main window on app startup
 app.whenReady().then(() => {
     loadMainWindow()
 
@@ -115,30 +122,33 @@ app.whenReady().then(() => {
     })
 })
 
+// Close app on exit
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
+    if (process.platform !== 'darwin')
+        app.quit()
 })
 
-app.on('will-quit', (event) => {
-    event.preventDefault()
-
+// Launch script before exiting, if specified
+app.on('will-quit', () => {
     if (launchInjector)
         shell.openPath(injectorPath)
-
-    app.exit()
 })
 
+// Close current window
 ipcMain.on('close-window', () => {
     BrowserWindow.getFocusedWindow().close()
 })
 
+// Launch script and quit app
 ipcMain.on('launch-script', () => {
     launchInjector = true
     app.quit()
 })
 
+// Launch 'Advanced Info' window
 ipcMain.on('advanced-window', createAdvancedWindow)
 
+// Launch info window if the settings file is missing
 ipcMain.on('settings-info-window', () => {
     const win = newInfoWindow()
     win.on('closed', createAdvancedWindow)
@@ -147,14 +157,17 @@ ipcMain.on('settings-info-window', () => {
     errorType = 'settings-info'
 })
 
+// Launch info window after copying to clipboard
 ipcMain.on('clipboard-window', () => {
     createInfoWindow('clipboard-info')
 })
 
+// Launch info window before restoring backups
 ipcMain.on('restore-window', () => {
     createInfoWindow('restore-info')
 })
 
+// Restore backups
 ipcMain.on('close-restore-window', () => {
     errorType = 'restoring-info'
     BrowserWindow.getFocusedWindow().webContents.send(errorType)
@@ -180,10 +193,12 @@ ipcMain.on('close-restore-window', () => {
     createInfoWindow('restore-success-info')
 })
 
+// Launch info window before deleting backups
 ipcMain.on('reset-window', () => {
     createInfoWindow('reset-info')
 })
 
+// Delete backups
 ipcMain.on('close-reset-window', () => {
     errorType = 'resetting-info'
     BrowserWindow.getFocusedWindow().webContents.send(errorType)
@@ -222,10 +237,12 @@ ipcMain.on('close-reset-window', () => {
     createInfoWindow('reset-success-info')
 })
 
+// Launch info window after saving settings file
 ipcMain.on('settings-saved-window', () => {
     createInfoWindow('settings-saved-info')
 })
 
-ipcMain.on('get-error', () => {
+// Send info message to info window
+ipcMain.on('get-info', () => {
     BrowserWindow.getFocusedWindow().webContents.send(errorType)
 })

@@ -4,9 +4,11 @@ const { ipcRenderer } = require('electron')
 
 const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
 
+// Custom linux styling
 if (process.platform == 'linux')
     document.getElementById('ok-button').style.left = '265px'
 
+// Set the info window depending on the sent message
 ipcRenderer.on('tools-error', () => {
     document.title = 'Error'
     document.getElementById('error-img').src = '../assets/error.svg'
@@ -125,8 +127,10 @@ ipcRenderer.on('settings-saved-info', () => {
     document.getElementById('text').innerHTML = 'Successfully saved the new settings.'
 })
 
+// Use 'OK' button to close info window
 document.getElementById('ok-button').addEventListener('click', () => {
     ipcRenderer.send('close-window')
 })
 
-ipcRenderer.send('get-error')
+// Ask main process for the info message
+ipcRenderer.send('get-info')

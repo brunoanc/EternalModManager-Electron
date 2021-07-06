@@ -5,11 +5,13 @@ const { shell, ipcRenderer } = require('electron')
 
 const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
 
+// Custom linux styling
 if (process.platform == 'linux') {
     document.getElementById('vl').style.height = '290px'
     document.getElementsByClassName('right')[0].style.margin = '10px 0 0 0'
 }
 
+// Add functionality to buttons
 document.getElementById('open-mods').addEventListener('click', () => {
     shell.openPath(path.join(appPath, 'Mods'))
 })
@@ -51,6 +53,7 @@ document.getElementById('copy-json').addEventListener('click', () => {
     })
 })
 
+// Add functionality to mod injector settings integration
 const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt')
 const newLine = process.platform == 'win32' ? '\r\n' : '\n'
 const settingsMap = {}
