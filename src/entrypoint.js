@@ -9,6 +9,20 @@ var launchInjector = false
 var errorType = ''
 var mainWindow
 
+// Get current window
+function getCurrentWindow() {
+    var win = mainWindow
+
+    while (true) {
+        const childWindows = win.getChildWindows()
+
+        if (childWindows.length == 0)
+            return win
+
+        win = childWindows[0]
+    }
+}
+
 // Create main window
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -55,7 +69,7 @@ function createAdvancedWindow() {
 // Create new info/warning/error window
 function newInfoWindow(parent) {
     return new BrowserWindow({
-        parent: parent ? parent : BrowserWindow.getFocusedWindow(),
+        parent: parent ? parent : getCurrentWindow(),
         modal: true,
         width: 360,
         height: process.platform == 'win32' ? 180 : 150,
@@ -155,7 +169,7 @@ app.on('will-quit', () => {
 
 // Close current window
 ipcMain.on('close-window', () => {
-    BrowserWindow.getFocusedWindow().close()
+    getCurrentWindow().close()
 })
 
 // Launch script and quit app
@@ -189,7 +203,7 @@ ipcMain.on('restore-window', () => {
 // Restore backups
 ipcMain.on('close-restore-window', () => {
     errorType = 'restoring-info'
-    BrowserWindow.getFocusedWindow().webContents.send(errorType)
+    getCurrentWindow().webContents.send(errorType)
 
     const backups = getBackups(path.join(appPath, 'base'))
 
@@ -208,7 +222,7 @@ ipcMain.on('close-restore-window', () => {
         }
     })
 
-    BrowserWindow.getFocusedWindow().close()
+    getCurrentWindow().close()
     createInfoWindow('restore-success-info')
 })
 
@@ -220,7 +234,7 @@ ipcMain.on('reset-window', () => {
 // Delete backups
 ipcMain.on('close-reset-window', () => {
     errorType = 'resetting-info'
-    BrowserWindow.getFocusedWindow().webContents.send(errorType)
+    getCurrentWindow().webContents.send(errorType)
 
     const backups = getBackups(path.join(appPath, 'base'))
 
@@ -252,7 +266,7 @@ ipcMain.on('close-reset-window', () => {
         fs.writeFileSync(settingsPath, settings)
     }
 
-    BrowserWindow.getFocusedWindow().close()
+    getCurrentWindow().close()
     createInfoWindow('reset-success-info')
 })
 
@@ -263,5 +277,5 @@ ipcMain.on('settings-saved-window', () => {
 
 // Send info message to info window
 ipcMain.on('get-info', () => {
-    BrowserWindow.getFocusedWindow().webContents.send(errorType)
+    getCurrentWindow().webContents.send(errorType)
 })
