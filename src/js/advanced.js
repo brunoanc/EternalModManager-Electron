@@ -9,6 +9,7 @@ const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_E
 if (process.platform == 'linux') {
     document.getElementById('vl').style.height = '290px'
     document.getElementsByClassName('right')[0].style.margin = '10px 0 0 0'
+    document.getElementsByClassName('left')[0].style.margin = '17px 0 0 15px'
 }
 
 // Add functionality to buttons
