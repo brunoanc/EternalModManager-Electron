@@ -2,14 +2,16 @@ const path = require('path')
 const { app, ipcMain, shell, BrowserWindow } = require('electron')
 const fs = require('fs')
 
-const injectorPath = process.platform == 'win32' ? path.join('.', 'EternalModInjector.bat') : path.join('.', 'EternalModInjectorShell.sh')
+const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+const injectorPath = process.platform == 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh')
 var launchInjector = false
-var errorType
+var errorType = ''
+var mainWindow
 
 function createWindow() {
-    const win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 610,
-        height: 775,
+        height: process.platform == 'win32' ? 775 : 720,
         maximizable: false,
         resizable: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
@@ -19,18 +21,16 @@ function createWindow() {
         }
     })
     
-    win.setMenu(null)
-    win.loadFile(path.join(__dirname, 'html', 'index.html'))
+    mainWindow.setMenu(null)
+    mainWindow.loadFile(path.join(__dirname, 'html', 'index.html'))
 }
 
 function createAdvancedWindow() {
-    const mainWindow = BrowserWindow.getFocusedWindow()
-
     const win = new BrowserWindow({
         parent: mainWindow,
         modal: true,
         width: 600,
-        height: 335,
+        height: process.platform == 'win32' ? 335 : 306,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -41,7 +41,7 @@ function createAdvancedWindow() {
         }
     })
 
-    win.on('close', () => {
+    win.on('closed', () => {
         mainWindow.webContents.send('restore-parent')
     })
 
@@ -54,7 +54,7 @@ function newInfoWindow(parent) {
         parent: parent ? parent : BrowserWindow.getFocusedWindow(),
         modal: true,
         width: 360,
-        height: 180,
+        height: process.platform == 'win32' ? 180 : 150,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -67,7 +67,7 @@ function newInfoWindow(parent) {
 }
 
 function loadMainWindow() {
-    if (fs.existsSync(path.join('.', 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
+    if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
         createWindow()
     }
     else {
@@ -79,11 +79,10 @@ function loadMainWindow() {
 }
 
 function createInfoWindow(send) {
-    const mainWindow = BrowserWindow.getFocusedWindow()
-    const win = newInfoWindow(mainWindow)
+    const win = newInfoWindow()
 
     win.on('close', () => {
-        mainWindow.webContents.send('restore-parent')
+        win.getParentWindow().send('restore-parent')
     })
 
     win.setMenu(null)
@@ -91,15 +90,14 @@ function createInfoWindow(send) {
     errorType = send
 }
 
-function getBackups(backups) {
+function getBackups(dirPath, backups) {
     backups = backups ? backups : []
 
-    const dirPath = path.join('.', 'base')
     const files = fs.readdirSync(dirPath)
   
     files.forEach((file) => {
         if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
-            backups = getAllFiles(path.join(dirPath, file), backups)
+            backups = getBackups(path.join(dirPath, file), backups)
         }
         else if (file.endsWith('.resources.backup') || file.endsWith('.snd.backup')) {
             backups.push(path.join(dirPath, file))
@@ -161,13 +159,13 @@ ipcMain.on('close-restore-window', () => {
     errorType = 'restoring-info'
     BrowserWindow.getFocusedWindow().webContents.send(errorType)
 
-    const backups = getBackups()
+    const backups = getBackups(path.join(appPath, 'base'))
 
-    if (fs.existsSync(path.join('.', 'DOOMEternalx64vk.exe.backup')))
-        backups.push(path.join('.', 'DOOMEternalx64vk.exe.backup'))
+    if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe.backup')))
+        backups.push(path.join(appPath, 'DOOMEternalx64vk.exe.backup'))
 
-    if (fs.existsSync(path.join('.', 'base', 'packagemapspec.json.backup')))
-        backups.push(path.join('.', 'base', 'packagemapspec.json.backup'))
+    if (fs.existsSync(path.join(appPath, 'base', 'packagemapspec.json.backup')))
+        backups.push(path.join(appPath, 'base', 'packagemapspec.json.backup'))
 
     backups.forEach((backup) => {
         try {
@@ -190,13 +188,13 @@ ipcMain.on('close-reset-window', () => {
     errorType = 'resetting-info'
     BrowserWindow.getFocusedWindow().webContents.send(errorType)
 
-    const backups = getBackups()
+    const backups = getBackups(path.join(appPath, 'base'))
 
-    if (fs.existsSync(path.join('.', 'DOOMEternalx64vk.exe.backup')))
-        backups.push(path.join('.', 'DOOMEternalx64vk.exe.backup'))
+    if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe.backup')))
+        backups.push(path.join(appPath, 'DOOMEternalx64vk.exe.backup'))
 
-    if (fs.existsSync(path.join('.', 'base', 'packagemapspec.json.backup')))
-        backups.push(path.join('.', 'base', 'packagemapspec.json.backup'))
+    if (fs.existsSync(path.join(appPath, 'base', 'packagemapspec.json.backup')))
+        backups.push(path.join(appPath, 'base', 'packagemapspec.json.backup'))
 
     backups.forEach((backup) => {
         try {
@@ -207,7 +205,7 @@ ipcMain.on('close-reset-window', () => {
         }
     })
 
-    const settingsPath = path.join('.', 'EternalModInjector Settings.txt')
+    const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt')
 
     if (fs.existsSync(settingsPath)) {
         var settings = ''

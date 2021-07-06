@@ -5,8 +5,9 @@ const fileWatcher = require('chokidar')
 const admZip = require('adm-zip')
 const dragDrop = require('drag-drop')
 
-const modsPath = path.join('.', 'Mods')
-const disabledModsPath = path.join('.', 'DisabledMods')
+const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+const modsPath = path.join(appPath, 'Mods')
+const disabledModsPath = path.join(appPath, 'DisabledMods')
 
 class ModInfo {
     constructor(name, author, description, version, loadPriority, requiredVersion) {
@@ -261,13 +262,13 @@ function initButtons() {
     })
 
     document.getElementById('advanced-button').addEventListener('click', () => {
-        document.body.style.opacity = 0.7
-        const send = fs.existsSync(path.join('.', 'EternalModInjector Settings.txt')) ? 'advanced-window' : 'settings-info-window'
+        document.body.style.opacity = '0.5'
+        const send = fs.existsSync(path.join(appPath, 'EternalModInjector Settings.txt')) ? 'advanced-window' : 'settings-info-window'
         ipcRenderer.send(send)
     })
 
     ipcRenderer.on('restore-parent', () => {
-        document.body.style.opacity = 1
+        document.body.style.opacity = '1'
     })
 }
 

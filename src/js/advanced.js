@@ -3,48 +3,55 @@ const fs = require('fs')
 const clipboardy = require('clipboardy')
 const { shell, ipcRenderer } = require('electron')
 
+const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+
+if (process.platform == 'linux') {
+    document.getElementById('vl').style.height = '290px'
+    document.getElementsByClassName('right')[0].style.margin = '10px 0 0 0'
+}
+
 document.getElementById('open-mods').addEventListener('click', () => {
-    shell.openPath(path.join('.', 'Mods'))
+    shell.openPath(path.join(appPath, 'Mods'))
 })
 
 document.getElementById('open-disabled').addEventListener('click', () => {
-    shell.openPath(path.join('.', 'DisabledMods'))
+    shell.openPath(path.join(appPath, 'DisabledMods'))
 })
 
 document.getElementById('open-game').addEventListener('click', () => {
-    shell.openPath('.')
+    shell.openPath(appPath)
 })
 
 document.getElementById('restore-backups').addEventListener('click', () => {
-    document.body.style.opacity = 0.7
+    document.body.style.opacity = '0.5'
     ipcRenderer.send('restore-window')
 
     ipcRenderer.on('restore-parent', () => {
-        document.body.style.opacity = 1
+        document.body.style.opacity = '1'
     })
 })
 
 document.getElementById('reset-backups').addEventListener('click', () => {
-    document.body.style.opacity = 0.7
+    document.body.style.opacity = '0.5'
     ipcRenderer.send('reset-window')
 
     ipcRenderer.on('restore-parent', () => {
-        document.body.style.opacity = 1
+        document.body.style.opacity = '1'
     })
 })
 
 document.getElementById('copy-json').addEventListener('click', () => {
     clipboardy.writeSync('{\n\t"name":"",\n\t"author":"",\n\t"description":"",\n\t"version":"",\n\t"loadPriority":0,\n\t"requiredVersion":8\n}')
 
-    document.body.style.opacity = 0.7
+    document.body.style.opacity = '0.5'
     ipcRenderer.send('clipboard-window')
 
     ipcRenderer.on('restore-parent', () => {
-        document.body.style.opacity = 1
+        document.body.style.opacity = '1'
     })
 })
 
-const settingsPath = path.join('.', 'EternalModInjector Settings.txt')
+const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt')
 const newLine = process.platform == 'win32' ? '\r\n' : '\n'
 const settingsMap = {}
 const settingsValuesMap = {
@@ -57,7 +64,7 @@ const settingsValuesMap = {
     GAME_PARAMETERS: 'args-input'
 }
 
-if (process.platform == 'win32') {
+if (process.platform == 'win32' || !fs.existsSync(settingsPath)) {
     document.getElementById('autoupdate-checkbox').disabled = true
     document.getElementById('autoupdate-label').style.color = 'gray'
 }
@@ -72,11 +79,14 @@ if (!fs.existsSync(settingsPath)) {
     document.getElementById('save-button').disabled = true
 
     Object.values(settingsValuesMap).forEach((checkbox) => {
+        if (checkbox == 'args-input')
+            return
+
         document.getElementById(checkbox).disabled = true
         document.getElementById(checkbox.slice(0, -8) + 'label').style.color = 'gray'
     })
 
-    throw new Error()
+    throw new Error('Settings not found, stop script execution')
 }
 
 fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line) => {
@@ -104,6 +114,9 @@ document.getElementById('save-button').addEventListener('click', () => {
     var extraSettings = newLine
 
     fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line) => {
+        if (line == newLine)
+            return
+
         var splitLine = line.split('=')
         const settingsKey = splitLine[0].slice(1)
         var settingsValue = ''
@@ -140,10 +153,10 @@ document.getElementById('save-button').addEventListener('click', () => {
     settingsFile += extraSettings
     fs.writeFileSync(settingsPath, settingsFile)
 
-    document.body.style.opacity = 0.7
+    document.body.style.opacity = '0.5'
     ipcRenderer.send('settings-saved-window')
 
     ipcRenderer.on('restore-parent', () => {
-        document.body.style.opacity = 1
+        document.body.style.opacity = '1'
     })
 })

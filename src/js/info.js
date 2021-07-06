@@ -2,15 +2,20 @@ const path = require('path')
 const fs = require('fs')
 const { ipcRenderer } = require('electron')
 
+const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+
+if (process.platform == 'linux')
+    document.getElementById('ok-button').style.left = '265px'
+
 ipcRenderer.on('tools-error', () => {
     document.title = 'Error'
     document.getElementById('error-img').src = '../assets/error.svg'
 
-    if (!fs.existsSync(path.join('.', 'DOOMEternalx64vk.exe'))) {
+    if (!fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe'))) {
         document.getElementById('text').innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>This tool needs to be placed in the game folder.'
     }
     else {
-        document.getElementById('text').innerHTML = 'Can\'t find' + process.platform == 'win32' ? 'EternalModInjector.bat.' : 'EternalModInjectorShell.sh.' + '<br>Make sure that the modding tools are installed.'
+        document.getElementById('text').innerHTML = 'Can\'t find ' + (process.platform == 'win32' ? 'EternalModInjector.bat.' : 'EternalModInjectorShell.sh.') + '<br>Make sure that the modding tools are installed.'
     }
 })
 
