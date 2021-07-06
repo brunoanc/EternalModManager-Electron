@@ -26,6 +26,9 @@
     "linux": {
       "target": "AppImage"
     },
+    "appImage": {
+      "artifactName": "EternalModManager.AppImage"
+    },
     "portable": {
       "unicode": false,
       "artifactName": "EternalModManager.exe"
