@@ -14,7 +14,7 @@ First, make sure you have the latest LTS version of NodeJS and `npm` installed. 
 
 ```
 npm install
-npx electron-builder build
+npm run build
 ```
 
 The compiled standalone/AppImage binary will be located in the `dist` folder.
