@@ -26,8 +26,8 @@ jobs:
     
     - name: Debug ls
       run: |
-        "ls  ${{ github.workspace }}/dist/"
         "ls ${{ github.workspace }}"
+        "ls ${{ github.workspace }}/.."
       
     - name: Release AppImage
       uses: marvinpinto/action-automatic-releases@latest
