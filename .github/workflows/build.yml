@@ -30,7 +30,7 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
-          "${{ github.workspace }}/dist/EternalModManager.AppImage"
+          "dist/EternalModManager.AppImage"
       
   windows-build:
     runs-on: windows-2019
