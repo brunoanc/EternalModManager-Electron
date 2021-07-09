@@ -30,7 +30,7 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
-          "${ {github.workspace }}/dist/EternalModManager.AppImage"
+          "${{ github.workspace }}/dist/EternalModManager.AppImage"
       
   windows-build:
     runs-on: windows-2019
@@ -54,5 +54,5 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: "${ {github.workspace }}/dist/EternalModManager.exe"
+        file: "${{ github.workspace }}/dist/EternalModManager.exe"
         tag: ${{ github.ref }}
