@@ -29,7 +29,7 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file_glob: true
-        file: "**/EternalResourceExtractor.AppImage"
+        file: "**/EternalModManager.AppImage"
         tag: ${{ github.ref }}
       
   windows-build:
