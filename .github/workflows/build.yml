@@ -25,9 +25,7 @@ jobs:
       run: npm run build
     
     - name: Debug ls
-      run: |
-        "ls ${{ github.workspace }}"
-        "ls ${{ github.workspace }}/.."
+      run: "ls ${{ github.workspace }}/.."
       
     - name: Release AppImage
       uses: marvinpinto/action-automatic-releases@latest
