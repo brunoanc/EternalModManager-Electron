@@ -23,6 +23,11 @@ jobs:
     
     - name: Build project
       run: npm run build
+    
+    - name: Debug ls
+      run: |
+        "ls  ${{ github.workspace }}/dist/"
+        "ls ${{ github.workspace }}"
       
     - name: Release AppImage
       uses: marvinpinto/action-automatic-releases@latest
@@ -30,7 +35,7 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
-          "dist/EternalModManager.AppImage"
+          "${{ github.workspace }}/dist/EternalModManager.AppImage"
       
   windows-build:
     runs-on: windows-2019
