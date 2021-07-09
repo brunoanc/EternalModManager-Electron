@@ -13,6 +13,9 @@ var mainWindow
 function getCurrentWindow() {
     var win = mainWindow
 
+    if (!win)
+        return null
+
     while (true) {
         const childWindows = win.getChildWindows()
 
@@ -90,9 +93,9 @@ function loadMainWindow() {
         createWindow()
     }
     else {
-        const win = newInfoWindow()
-        win.setMenu(null)
-        win.loadFile(path.join(__dirname, 'html', 'info.html'))
+        mainWindow = newInfoWindow()
+        mainWindow.setMenu(null)
+        mainWindow.loadFile(path.join(__dirname, 'html', 'info.html'))
         errorType = 'tools-error'
     }
 }
