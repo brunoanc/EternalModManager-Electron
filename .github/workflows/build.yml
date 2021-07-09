@@ -24,13 +24,13 @@ jobs:
     - name: Build project
       run: npm run build
       
-    - name: Upload AppImage
-      uses: svenstaro/upload-release-action@v2
+    - name: Release AppImage
+      uses: marvinpinto/action-automatic-releases@latest
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file_glob: true
-        file: "**/EternalModManager.AppImage"
-        tag: ${{ github.ref }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+          **/EternalModManager.AppImage
       
   windows-build:
     runs-on: windows-2019
