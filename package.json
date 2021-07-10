@@ -34,7 +34,7 @@
     "snap": {
       "artifactName": "EternalModManager.snap",
       "title": "eternalmodmanager",
-      "confinement": "strict",
+      "confinement": "classic",
       "summary": "Mod manager for DOOM Eternal.",
       "grade": "stable",
       "useTemplateApp": true
