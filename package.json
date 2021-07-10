@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder build"
+    "build": "electron-builder build --publish never"
   },
   "build": {
     "appId": "com.powerball.eternalmodmanager",
