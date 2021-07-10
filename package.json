@@ -13,7 +13,8 @@
     "adm-zip": "^0.5.5",
     "chokidar": "^3.5.2",
     "clipboardy": "^2.3.0",
-    "drag-drop": "^7.2.0"
+    "drag-drop": "^7.2.0",
+    "@terascope/fetch-github-release": "^0.7.7"
   },
   "scripts": {
     "start": "electron .",
