@@ -286,6 +286,7 @@ ipcMain.on('get-info', () => {
     getCurrentWindow().webContents.send(errorType)
 })
 
+// Load main window after downloading the modding tools
 ipcMain.on('tools-download-complete', () => {
     const win = getCurrentWindow()
     loadMainWindow()
