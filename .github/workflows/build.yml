@@ -31,6 +31,7 @@ jobs:
         prerelease: false
         files: |
           ${{ github.workspace }}/dist/EternalModManager.AppImage
+          ${{ github.workspace }}/dist/EternalModManager.snap
       
   windows-build:
     runs-on: windows-2019
