@@ -3,7 +3,7 @@ const fs = require('fs')
 const clipboardy = require('clipboardy')
 const { shell, ipcRenderer } = require('electron')
 
-const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+const appPath = process.argv.slice(-1)[0]
 
 // Custom linux styling
 if (process.platform == 'linux') {
@@ -105,7 +105,7 @@ fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((l
 
 Object.keys(settingsValuesMap).forEach((setting) => {
     if (setting == 'GAME_PARAMETERS') {
-        document.getElementById('args-input').value = settingsMap[':GAME_PARAMETERS'] ? settingsMap[':GAME_PARAMETERS'] : ''
+        document.getElementById('args-input').value = settingsMap[':GAME_PARAMETERS'] || ''
         return
     }
     else {

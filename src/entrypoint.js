@@ -3,7 +3,7 @@ const { app, ipcMain, BrowserWindow } = require('electron')
 const fs = require('fs')
 const { spawn } = require('child_process')
 
-const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.' // Get app's path
+const appPath = (process.env['SNAP'] ? path.resolve(process.argv[1]) : process.argv[2]) || process.env['PORTABLE_EXECUTABLE_DIR'] || process.cwd()
 const injectorPath = process.platform == 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh')
 var launchInjector = false
 var errorType = ''
@@ -36,10 +36,11 @@ function createWindow() {
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
+            additionalArguments: [ appPath ]
         }
     })
-    
+
     mainWindow.setMenu(null)
     mainWindow.loadFile(path.join(__dirname, 'html', 'index.html'))
 }
@@ -57,7 +58,8 @@ function createAdvancedWindow() {
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
+            additionalArguments: [ appPath ]
         }
     })
 
@@ -72,7 +74,7 @@ function createAdvancedWindow() {
 // Create new info/warning/error window
 function newInfoWindow(parent) {
     return new BrowserWindow({
-        parent: parent ? parent : getCurrentWindow(),
+        parent: parent || getCurrentWindow(),
         modal: true,
         width: 360,
         height: process.platform == 'win32' ? 180 : 150,
@@ -82,7 +84,8 @@ function newInfoWindow(parent) {
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
+            additionalArguments: [ appPath ]
         }
     })
 }
@@ -115,7 +118,7 @@ function createInfoWindow(send) {
 
 // Get backup files to restore/delete
 function getBackups(dirPath, backups) {
-    backups = backups ? backups : []
+    backups = backups || []
 
     const files = fs.readdirSync(dirPath)
   
@@ -281,4 +284,10 @@ ipcMain.on('settings-saved-window', () => {
 // Send info message to info window
 ipcMain.on('get-info', () => {
     getCurrentWindow().webContents.send(errorType)
+})
+
+ipcMain.on('tools-download-complete', () => {
+    const win = getCurrentWindow()
+    loadMainWindow()
+    win.close()
 })

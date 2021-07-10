@@ -1,8 +1,9 @@
 const path = require('path')
 const fs = require('fs')
+const downloadRelease = require('@terascope/fetch-github-release')
 const { ipcRenderer } = require('electron')
 
-const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+const appPath = process.argv.slice(-1)[0]
 
 // Custom linux styling
 if (process.platform == 'linux')
@@ -14,10 +15,48 @@ ipcRenderer.on('tools-error', () => {
     document.getElementById('error-img').src = '../assets/error.svg'
 
     if (!fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe'))) {
-        document.getElementById('text').innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>This tool needs to be placed in the game folder.'
+        document.getElementById('text').innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>This tool must be launched in the game directory, or have it passed as an argument.'
+    }
+    else if (process.platform == 'linux') {
+        document.getElementById('text').innerHTML = 'Couldn\'t find the modding tools, do you want to download them?'
+
+        const button = document.getElementById('ok-button')
+        button.innerHTML = 'No'
+
+        const yesButton = document.createElement('button')
+        yesButton.innerHTML = 'Yes'
+        yesButton.style.position = 'absolute'
+        yesButton.style.top = '115px'
+        yesButton.style.left = '165px'
+        yesButton.id = 'yes-button'
+
+        yesButton.addEventListener('click', () => {
+            document.title = 'Information'
+            document.getElementById('error-img').src = '../assets/info.svg'
+            document.getElementById('text').innerHTML = 'Downloading modding tools...'
+
+            const okButton = document.getElementById('ok-button')
+            document.body.removeChild(okButton)
+            document.body.removeChild(document.getElementById('yes-button'))
+
+            downloadRelease('leveste', 'EternalBasher', appPath, () => { return true }, (asset) => { return asset.name == 'EternalModInjectorShell.zip' }, false, false)
+            .then(() => {
+                document.getElementById('text').innerHTML = 'Modding tools were downloaded succesfully.'
+                ipcRenderer.send('tools-download-complete')
+            }).catch(() => {
+                document.title = 'Error'
+                document.getElementById('error-img').src = '../assets/error.svg'
+                document.getElementById('text').innerHTML = 'Failed to download the modding tools.'
+                okButton.innerHTML = 'OK'
+                document.body.appendChild(okButton)
+                document.body.removeChild(document.getElementById('yes-button'))
+            });
+        })
+
+        document.body.appendChild(yesButton)
     }
     else {
-        document.getElementById('text').innerHTML = 'Can\'t find ' + (process.platform == 'win32' ? 'EternalModInjector.bat.' : 'EternalModInjectorShell.sh.') + '<br>Make sure that the modding tools are installed.'
+        document.getElementById('text').innerHTML = 'Can\'t find EternalModInjector.bat.<br>Make sure that the modding tools are installed.'
     }
 })
 

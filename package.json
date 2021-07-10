@@ -1,6 +1,6 @@
 {
   "name": "eternalmodmanager",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Cross platform mod manager for DOOM Eternal.",
   "main": "src/entrypoint.js",
   "author": "PowerBall253",
@@ -25,7 +25,18 @@
       "target": "portable"
     },
     "linux": {
-      "target": "AppImage"
+      "target": [
+        "AppImage",
+        "snap"
+      ]
+    },
+    "snap": {
+      "artifactName": "EternalModManager.snap",
+      "title": "eternalmodmanager",
+      "confinement": "strict",
+      "summary": "Mod manager for DOOM Eternal.",
+      "grade": "stable",
+      "useTemplateApp": true
     },
     "appImage": {
       "artifactName": "EternalModManager.AppImage"

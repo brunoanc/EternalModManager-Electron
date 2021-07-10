@@ -5,17 +5,17 @@ const fileWatcher = require('chokidar')
 const admZip = require('adm-zip')
 const dragDrop = require('drag-drop')
 
-const appPath = process.env['PORTABLE_EXECUTABLE_DIR'] ? process.env['PORTABLE_EXECUTABLE_DIR'] : '.'
+const appPath = process.argv.slice(-1)[0]
 const modsPath = path.join(appPath, 'Mods')
 const disabledModsPath = path.join(appPath, 'DisabledMods')
 
 // Class containing mod info
 class ModInfo {
     constructor(name, author, description, version, loadPriority, requiredVersion) {
-        this.name = name ? name : ''
-        this.author = author ? author : 'Unknown.'
-        this.description = description ? description : 'Not specified.'
-        this.version = version ? version : 'Not specified.'
+        this.name = name || ''
+        this.author = author || 'Unknown.'
+        this.description = description || 'Not specified.'
+        this.version = version || 'Not specified.'
         this.loadPriority = loadPriority ? loadPriority.toString() : '0'
         this.requiredVersion = requiredVersion ? requiredVersion.toString() : 'Unknown.'
     }
@@ -83,7 +83,7 @@ function getMods() {
         var checkbox = document.createElement('input')
         checkbox.type = 'checkbox'
         checkbox.className = mod[1]
-        checkbox.checked = mod[1] == 'mod' ? true : false
+        checkbox.checked = mod[1] == 'mod'
 
         checkbox.addEventListener('change', (event) => {
             if (event.currentTarget.checked) {
