@@ -50,7 +50,7 @@ ipcRenderer.on('tools-error', () => {
                 okButton.innerHTML = 'OK'
                 document.body.appendChild(okButton)
                 document.body.removeChild(document.getElementById('yes-button'))
-            });
+            })
         })
 
         document.body.appendChild(yesButton)
