@@ -1,4 +1,6 @@
 # EternalModManager
+[![Build](https://github.com/PowerBall253/EternalModManager/actions/workflows/build.yml/badge.svg)](https://github.com/PowerBall253/EternalModManager/actions/workflows/build.yml)
+
 Mod manager for DOOM Eternal, built with Electron.
 
 ## Running
