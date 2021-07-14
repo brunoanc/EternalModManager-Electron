@@ -7,7 +7,7 @@ Mod manager for DOOM Eternal, built with Electron.
 First, make sure you have the latest LTS version of NodeJS and `npm` installed. Then clone the repo, and run the following commands:
 
 ```
-npm install
+npm ci
 npm start
 ```
 
@@ -15,7 +15,7 @@ npm start
 First, make sure you have the latest LTS version of NodeJS and `npm` installed. Then clone the repo, and run the following commands:
 
 ```
-npm install
+npm ci
 npm run build
 ```
 
