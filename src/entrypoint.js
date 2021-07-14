@@ -70,7 +70,7 @@ function createAdvancedWindow() {
         parent: mainWindow,
         modal: true,
         width: 600,
-        height: process.platform == 'win32' ? 335 : 306,
+        height: process.platform == 'win32' ? 355 : 326,
         minimizable: false,
         maximizable: false,
         resizable: false,

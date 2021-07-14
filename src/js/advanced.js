@@ -7,9 +7,8 @@ const appPath = process.argv.slice(-1)[0]
 
 // Custom linux styling
 if (process.platform == 'linux') {
-    document.getElementById('vl').style.height = '290px'
     document.getElementsByClassName('right')[0].style.margin = '10px 0 0 0'
-    document.getElementsByClassName('left')[0].style.margin = '17px 0 0 15px'
+    document.getElementsByClassName('left')[0].style.margin = '15px 0 0 15px'
 }
 
 // Add functionality to buttons
@@ -65,6 +64,7 @@ const settingsValuesMap = {
     COMPRESS_TEXTURES: 'texture-compression-checkbox',
     VERBOSE: 'verbose-checkbox',
     DISABLE_MULTITHREADING: 'multithreading-checkbox',
+    ONLINE_SAFE: 'online-checkbox',
     GAME_PARAMETERS: 'args-input'
 }
 

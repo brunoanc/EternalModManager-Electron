@@ -9,7 +9,7 @@ body {
 .left {
     width: 42.5%;
     height: 270px;
-    margin: 12px 0 0 15px;
+    margin: 13px 0 0 15px;
     vertical-align: center;
     align-items: center;
 }
@@ -17,7 +17,7 @@ body {
 .left button {
     height: 33px;
     width: 90%;
-    margin: 5px 9px 5px 0;
+    margin: 7px 9px 7px 0;
 }
 
 .left button:hover {
@@ -35,7 +35,7 @@ body {
 #vl {
     background: rgb(236, 233, 233);
     width: 0.5%;
-    height: 280px;
+    height: 310px;
 }
 
 .injector-header {
