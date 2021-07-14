@@ -3,7 +3,26 @@ const { app, ipcMain, BrowserWindow } = require('electron')
 const fs = require('fs')
 const { spawn } = require('child_process')
 
-const appPath = (process.env['SNAP'] ? path.resolve(process.argv[1]) : process.argv[2]) || process.env['PORTABLE_EXECUTABLE_DIR'] || process.cwd()
+// Get application path
+var appPath = ''
+
+if (process.platform == 'win32') {
+    if (process.argv[0].endsWith('electron.exe')) {
+        appPath = process.argv[2] || process.cwd()
+    }
+    else {
+        appPath = process.argv[1] || process.env['PORTABLE_EXECUTABLE_DIR'] || process.cwd()
+    }
+}
+else {
+    if (process.env['SNAP'] || process.env['APPIMAGE']) {
+        appPath = process.argv[1] || process.cwd()
+    }
+    else {
+        appPath = process.argv[2] || process.cwd()
+    }
+}
+
 const injectorPath = process.platform == 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh')
 var launchInjector = false
 var errorType = ''
