@@ -15,11 +15,11 @@ if (process.platform == 'win32') {
     }
 }
 else {
-    if (process.env['SNAP'] || process.env['APPIMAGE']) {
-        appPath = process.argv[1] || process.cwd()
+    if (process.argv[0].endsWith('electron')) {
+        appPath = process.argv[2] || process.cwd()
     }
     else {
-        appPath = process.argv[2] || process.cwd()
+        appPath = process.argv[1] || process.cwd()
     }
 }
 
