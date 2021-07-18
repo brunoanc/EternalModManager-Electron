@@ -157,7 +157,7 @@ function getBackups(dirPath, backups) {
 app.whenReady().then(() => {
     loadMainWindow()
 
-    app.on('activate', function () {
+    app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) loadMainWindow()
     })
 })
