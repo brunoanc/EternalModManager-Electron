@@ -2,26 +2,33 @@
   "name": "eternalmodmanager",
   "version": "1.4.0",
   "description": "Cross platform mod manager for DOOM Eternal.",
-  "main": "src/entrypoint.js",
+  "main": "build/entrypoint.js",
   "author": "PowerBall253",
   "license": "MIT",
   "devDependencies": {
+    "@types/adm-zip": "^0.4.34",
+    "copyfiles": "^2.4.1",
     "electron": "^13.1.5",
-    "electron-builder": "^22.11.7"
+    "electron-builder": "^22.11.7",
+    "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@terascope/fetch-github-release": "^0.7.7",
     "adm-zip": "^0.5.5",
     "chokidar": "^3.5.2",
     "clipboardy": "^2.3.0",
-    "drag-drop": "^7.2.0",
-    "@terascope/fetch-github-release": "^0.7.7"
+    "drag-drop": "^7.2.0"
   },
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder build --publish never"
+    "compile": "tsc && copyfiles -u 1 -e \"src/**/*.ts\" \"src/**/*\" build",
+    "start": "npm run compile && electron .",
+    "build": "npm run compile && electron-builder build --publish never"
   },
   "build": {
     "appId": "com.powerball.eternalmodmanager",
+    "directories": {
+      "buildResources": "buildResources"
+    },
     "win": {
       "target": "portable"
     },
