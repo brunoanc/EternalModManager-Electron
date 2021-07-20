@@ -15,7 +15,7 @@ else {
 }
 
 if (argPath === '--no-sandbox') {
-    argPath = ''
+    argPath = '';
 }
 
 if (argPath.length > 0) {
