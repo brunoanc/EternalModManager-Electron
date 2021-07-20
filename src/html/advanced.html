@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'" />
     <title>Advanced options</title>
-    <link rel="stylesheet" href="../css/advanced.css">
+    <link rel="stylesheet" href="../css/advanced.css" />
 </head>
 <body>
     <div class="left">
@@ -22,49 +22,49 @@
         <div class="checkbox-list">
             <ul id="checkbox-list">
                 <li>
-                    <input id="auto-launch-checkbox" type="checkbox">
+                    <input id="auto-launch-checkbox" type="checkbox" />
                     <label id="auto-launch-label" for="auto-launch-checkbox" title="Automatically launch the game after injecting mods.">
                         &nbspLaunch game after injecting mods
                     </label>
                 </li>
                 <li>
-                    <input id="reset-backups-checkbox" type="checkbox">
+                    <input id="reset-backups-checkbox" type="checkbox" />
                     <label id="reset-backups-label" for="reset-backups-checkbox" title="Resets the backed up game files before injecting mods. Enable only after verifying your game files.">
                         &nbspReset backups before injecting mods
                     </label>
                 </li>
                 <li>
-                    <input id="slowmode-checkbox" type="checkbox">
+                    <input id="slowmode-checkbox" type="checkbox" />
                     <label id="slowmode-label" for="slowmode-checkbox" title="The slow mod loading mod can produce slightly smaller .resources files. If unsure, leave this unchecked.">
                         &nbspEnable slow mod loading mode
                     </label>
                 </li>
                 <li>
-                    <input id="texture-compression-checkbox" type="checkbox">
+                    <input id="texture-compression-checkbox" type="checkbox" />
                     <label id="texture-compression-label" for="texture-compression-checkbox" title="Compress uncompressed texture mod files during the mod loading process. Decreases mod loading performance. Might help preventing crashes due to having too many texture mods installed.">
                         &nbspEnable texture compression
                     </label>
                 </li>
                 <li>
-                    <input id="verbose-checkbox" type="checkbox">
+                    <input id="verbose-checkbox" type="checkbox" />
                     <label id="verbose-label" for="verbose-checkbox" title="Useful for debugging mods. Prints more detailed information when loading mod files.">
                         &nbspEnable verbose logging
                     </label>
                 </li>
                 <li>
-                    <input id="multithreading-checkbox" type="checkbox">
+                    <input id="multithreading-checkbox" type="checkbox" />
                     <label id="multithreading-label" for="multithreading-checkbox" title="Might be useful if facing problems or slow mod loading in older machines/disks.">
                         &nbspDisable multi-threading
                     </label>
                 </li>
                 <li>
-                    <input id="online-checkbox" type="checkbox">
+                    <input id="online-checkbox" type="checkbox" />
                     <label id="online-label" for="online-checkbox" title="Disables loading of non online-safe mods.">
                         &nbspOnly load online-safe mods
                     </label>
                 </li>
                 <li>
-                    <input id="autoupdate-checkbox" type="checkbox">
+                    <input id="autoupdate-checkbox" type="checkbox" />
                     <label id="autoupdate-label" for="autoupdate-checkbox" title="Checks for updates during the mod loading process.">
                         &nbspEnable auto updates (Linux only)
                     </label>
@@ -73,7 +73,7 @@
         </div>
         <div class="game-args">
             <p id="args-text">Game launch parameters:</p>
-            <input id="args-input" type="text" title="Advanced users may want choose to enter modifications to their launch options.">
+            <input id="args-input" type="text" title="Advanced users may want choose to enter modifications to their launch options." />
         </div>
         <button id="save-button">Save mod injector settings</button>
     </div>
