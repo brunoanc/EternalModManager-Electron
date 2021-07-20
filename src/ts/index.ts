@@ -31,9 +31,10 @@ class ModInfo {
 // Get all zip files in given directory
 function getZipsInDirectory(directory: string): string[] {
     const zips: string[] = [];
+    let dirContent: string[] = [];
 
     try {
-        var dirContent = fs.readdirSync(directory);
+        dirContent = fs.readdirSync(directory);
     }
     catch (err) {
         return zips;
@@ -68,15 +69,15 @@ function getMods(): void {
     });
 
     mods.forEach((mod) => {
-        var modFile = mod[0];
-        var modInfo: ModInfo;
+        let modFile = mod[0];
+        let modInfo: ModInfo;
         
         try {
-            var zip = new admZip(path.join(modsPath, modFile));
-            var zipEntry = zip.getEntry('EternalMod.json');
+            let zip = new admZip(path.join(modsPath, modFile));
+            let zipEntry = zip.getEntry('EternalMod.json');
 
             if (zipEntry) {
-                var json = JSON.parse(zip.readAsText(zipEntry));
+                let json = JSON.parse(zip.readAsText(zipEntry));
                 modInfo = new ModInfo(json.name, json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
                 
             }
@@ -88,7 +89,7 @@ function getMods(): void {
             modInfo = new ModInfo(modFile);
         }
 
-        var checkbox = document.createElement('input');
+        let checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = mod[1];
         checkbox.checked = mod[1] === 'mod';
@@ -120,7 +121,7 @@ function getMods(): void {
             }
         });
 
-        var button = document.createElement('button');
+        let button = document.createElement('button');
         button.className = 'mod-button';
         button.appendChild(checkbox);
         button.appendChild(document.createTextNode(modFile));
@@ -134,7 +135,7 @@ function getMods(): void {
             document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
         });
         
-        var modLI = document.createElement('li');
+        let modLI = document.createElement('li');
         modLI.appendChild(button);
         fragment.appendChild(modLI);
     });
@@ -162,13 +163,13 @@ function makeModDirectories(): void {
 function initWatcher(): void {
     makeModDirectories();
 
-    var watcher = fileWatcher.watch(path.join(modsPath, '..'), {
+    let watcher = fileWatcher.watch(path.join(modsPath, '..'), {
         ignored: /[\/\\]\./,
         persistent: true,
         depth: 1
     });
 
-    var watcherReady = false;
+    let watcherReady = false;
     
     watcher.on('ready', () => {
         getMods()

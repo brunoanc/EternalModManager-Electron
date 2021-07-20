@@ -4,8 +4,8 @@ import { app, ipcMain, BrowserWindow } from 'electron';
 import { spawn } from 'child_process';
 
 // Get application path
-var appPath = process.env['PORTABLE_EXECUTABLE_DIR'] || process.cwd();
-var argPath = ''
+let appPath = process.env['PORTABLE_EXECUTABLE_DIR'] || process.cwd();
+let argPath = ''
 
 if (process.argv[0].endsWith('electron') || process.argv[0].endsWith('electron.exe')) {
     argPath = process.argv[2] || '';
@@ -23,13 +23,13 @@ if (argPath.length > 0) {
 }
 
 const injectorPath = process.platform === 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh');
-var launchInjector = false;
-var errorType = '';
-var mainWindow: BrowserWindow;
+let launchInjector = false;
+let errorType = '';
+let mainWindow: BrowserWindow;
 
 // Get current window
 function getCurrentWindow(): BrowserWindow | null {
-    var win = mainWindow;
+    let win = mainWindow;
 
     if (!win) {
         return null;
@@ -175,8 +175,8 @@ app.on('window-all-closed', () => {
 // Launch script before exiting, if specified
 app.on('will-quit', () => {
     if (launchInjector) {
-        var command = '';
-        var args: string[];
+        let command = '';
+        let args: string[];
 
         if (process.platform === 'win32') {
             command = 'start';
@@ -289,7 +289,7 @@ ipcMain.on('close-reset-window', () => {
     const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt');
 
     if (fs.existsSync(settingsPath)) {
-        var settings = '';
+        let settings = '';
 
         fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean).forEach((line) => {
             if (line.startsWith(':')) {

@@ -117,17 +117,17 @@ Object.keys(settingsValuesMap).forEach((setting) => {
 });
 
 document.getElementById('save-button')!.addEventListener('click', () => {
-    var settingsFile = '';
-    var extraSettings = newLine;
+    let settingsFile = '';
+    let extraSettings = newLine;
 
     fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line: string) => {
         if (line === newLine) {
             return;
         }
 
-        var splitLine = line.split('=');
+        let splitLine = line.split('=');
         const settingsKey = splitLine[0].slice(1);
-        var settingsValue = '';
+        let settingsValue = '';
 
         if (settingsValuesMap.hasOwnProperty(settingsKey)) {
             if (settingsKey === 'GAME_PARAMETERS') {
