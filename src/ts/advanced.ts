@@ -56,6 +56,7 @@ document.getElementById('copy-json')!.addEventListener('click', () => {
 // Add functionality to mod injector settings integration
 const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt');
 const newLine = process.platform === 'win32' ? '\r\n' : '\n';
+
 const settingsMap: { [key: string]: string } = {};
 const settingsValuesMap: { [key: string]: string } = {
     AUTO_LAUNCH_GAME: 'auto-launch-checkbox',
