@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=EternalModManager
+Exec=run.sh
+Type=Application
+Icon=com.powerball253.eternalmodmanager
+Categories=Utility

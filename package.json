@@ -25,9 +25,9 @@
     "build": "npm run compile && electron-builder build --publish never"
   },
   "build": {
-    "appId": "com.powerball.eternalmodmanager",
+    "appId": "com.powerball253.eternalmodmanager",
     "directories": {
-      "buildResources": "buildResources"
+      "buildResources": "resources"
     },
     "win": {
       "target": "portable"
