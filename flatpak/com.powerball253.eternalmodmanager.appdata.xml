@@ -2,7 +2,7 @@
 <!-- Copyright 2021 PowerBall253 -->
 <component type="desktop">
   <id>com.powerball253.eternalmodmanager</id>
-  <launchable type="desktop-id">com.powerball253.eternalmodmanager</launchable>
+  <launchable type="desktop-id">com.powerball253.eternalmodmanager.desktop</launchable>
   <name>EternalModManager</name>
   <project_license>MIT</project_license>
   <developer_name>PowerBall253</developer_name>
