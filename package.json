@@ -41,8 +41,7 @@
       "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
       "!**/resources/*",
       "!**/flatpak/*",
-      "!**/screenshots/*",
-      "!**/src/*"
+      "!**/screenshots/*"
     ],
     "directories": {
       "buildResources": "resources"

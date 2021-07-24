@@ -3,7 +3,7 @@ import fs from 'fs';
 import downloadRelease, { GithubReleaseAsset } from '@terascope/fetch-github-release';
 import { ipcRenderer } from 'electron';
 
-const appPath = process.argv.slice(-1)[0];
+const gamePath = process.argv.slice(-1)[0];
 
 // Custom linux styling
 if (process.platform === 'linux') {
@@ -15,10 +15,10 @@ ipcRenderer.on('tools-error', () => {
     document.title = 'Error';
     (document.getElementById('error-img') as HTMLImageElement).src = '../assets/error.svg';
 
-    if (!fs.existsSync(appPath) || !fs.lstatSync(appPath).isDirectory) {
+    if (!fs.existsSync(gamePath) || !fs.lstatSync(gamePath).isDirectory) {
         document.getElementById('text')!.innerHTML = 'Can\'t find the game directory.<br>This tool must be launched in the game directory, or have it passed as an argument.';
     }
-    else if (!fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe'))) {
+    else if (!fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe'))) {
         document.getElementById('text')!.innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>This tool must be launched in the game directory, or have it passed as an argument.';
     }
     else if (process.platform === 'linux') {
@@ -43,7 +43,7 @@ ipcRenderer.on('tools-error', () => {
             document.body.removeChild(okButton);
             document.body.removeChild(document.getElementById('yes-button')!);
 
-            downloadRelease('leveste', 'EternalBasher', appPath, () => { return true }, (asset: GithubReleaseAsset) => { return asset.name === 'EternalModInjectorShell.zip' }, false, false)
+            downloadRelease('leveste', 'EternalBasher', gamePath, () => { return true }, (asset: GithubReleaseAsset) => { return asset.name === 'EternalModInjectorShell.zip' }, false, false)
             .then(() => {
                 document.getElementById('text')!.innerHTML = 'Modding tools were downloaded succesfully.';
                 ipcRenderer.send('tools-download-complete');

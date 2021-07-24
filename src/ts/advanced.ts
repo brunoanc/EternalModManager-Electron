@@ -3,7 +3,7 @@ import fs from 'fs';
 import clipboardy from 'clipboardy';
 import { shell, ipcRenderer } from 'electron';
 
-const appPath = process.argv.slice(-1)[0];
+const gamePath = process.argv.slice(-1)[0];
 
 // Custom linux styling
 if (process.platform === 'linux') {
@@ -13,15 +13,15 @@ if (process.platform === 'linux') {
 
 // Add functionality to buttons
 document.getElementById('open-mods')!.addEventListener('click', () => {
-    shell.openPath(path.join(appPath, 'Mods'));
+    shell.openPath(path.join(gamePath, 'Mods'));
 });
 
 document.getElementById('open-disabled')!.addEventListener('click', () => {
-    shell.openPath(path.join(appPath, 'DisabledMods'));
+    shell.openPath(path.join(gamePath, 'DisabledMods'));
 });
 
 document.getElementById('open-game')!.addEventListener('click', () => {
-    shell.openPath(appPath);
+    shell.openPath(gamePath);
 });
 
 document.getElementById('restore-backups')!.addEventListener('click', () => {
@@ -54,7 +54,7 @@ document.getElementById('copy-json')!.addEventListener('click', () => {
 });
 
 // Add functionality to mod injector settings integration
-const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt');
+const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 const newLine = process.platform === 'win32' ? '\r\n' : '\n';
 
 const settingsMap: { [key: string]: string } = {};

@@ -4,7 +4,7 @@ import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 import { spawn } from 'child_process';
 
 // Get application path
-let appPath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
+let gamePath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
 let argPath = ''
 
 if (process.argv[0].endsWith('electron') || process.argv[0].endsWith('electron.exe')) {
@@ -19,11 +19,11 @@ if (argPath.startsWith('--')) {
 }
 
 if (argPath.length > 0) {
-    appPath = path.isAbsolute(argPath) ? argPath : path.join(appPath, argPath);
+    gamePath = path.isAbsolute(argPath) ? argPath : path.join(gamePath, argPath);
 }
 
 const configPath = path.join(app.getPath('userData'), 'config.json');
-const injectorPath = process.platform === 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh');
+let injectorPath = ''
 let launchInjector = false;
 let errorType = '';
 let mainWindow: BrowserWindow;
@@ -58,7 +58,7 @@ function createWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            additionalArguments: [ appPath ]
+            additionalArguments: [ gamePath ]
         }
     });
 
@@ -80,7 +80,7 @@ function createAdvancedWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            additionalArguments: [ appPath ]
+            additionalArguments: [ gamePath ]
         }
     });
 
@@ -106,17 +106,17 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            additionalArguments: [ appPath ]
+            additionalArguments: [ gamePath ]
         }
     });
 }
 
 // Load main process window
 function loadMainWindow(): void {
-    if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
+    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
         if (!fs.existsSync(configPath)) {
             const settings = {
-                gamePath: path.resolve(appPath)
+                gamePath: path.resolve(gamePath)
             };
 
             fs.writeFileSync(configPath, JSON.stringify(settings, null, 4));
@@ -165,23 +165,26 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
 
 // Load main window on app startup
 app.whenReady().then(() => {
-    if (appPath.length === 0) {
-        if (fs.existsSync(configPath)) {
-            appPath = JSON.parse(fs.readFileSync(configPath, 'utf8')).gamePath || '';
-        }
+    // If game path was not specified, try to get it from the config
+    if (gamePath.length === 0 && fs.existsSync(configPath)) {
+        gamePath = JSON.parse(fs.readFileSync(configPath, 'utf8')).gamePath || '';
+    }
 
+    // If game path is still undefined, prompt the user
+    if (gamePath.length === 0) {
         try {
-            appPath = dialog.showOpenDialogSync({
+            gamePath = dialog.showOpenDialogSync({
                 buttonLabel: 'Open',
                 title: 'Open the game directory',
                 properties: ['openDirectory', 'showHiddenFiles']
             })![0];
         }
         catch {
-            appPath = process.cwd();
+            gamePath = process.cwd();
         }
     }
 
+    injectorPath = process.platform === 'win32' ? path.join(gamePath, 'EternalModInjector.bat') : path.join(gamePath, 'EternalModInjectorShell.sh');
     loadMainWindow();
 
     app.on('activate', () => {
@@ -260,14 +263,14 @@ ipcMain.on('close-restore-window', () => {
     errorType = 'restoring-info';
     getCurrentWindow()!.webContents.send(errorType);
 
-    const backups = getBackups(path.join(appPath, 'base'));
+    const backups = getBackups(path.join(gamePath, 'base'));
 
-    if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe.backup'))) {
-        backups.push(path.join(appPath, 'DOOMEternalx64vk.exe.backup'));
+    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
+        backups.push(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'));
     }
 
-    if (fs.existsSync(path.join(appPath, 'base', 'packagemapspec.json.backup'))) {
-        backups.push(path.join(appPath, 'base', 'packagemapspec.json.backup'));
+    if (fs.existsSync(path.join(gamePath, 'base', 'packagemapspec.json.backup'))) {
+        backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
     }
 
     backups.forEach((backup) => {
@@ -293,14 +296,14 @@ ipcMain.on('close-reset-window', () => {
     errorType = 'resetting-info';
     getCurrentWindow()!.webContents.send(errorType);
 
-    const backups = getBackups(path.join(appPath, 'base'));
+    const backups = getBackups(path.join(gamePath, 'base'));
 
-    if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe.backup'))) {
-        backups.push(path.join(appPath, 'DOOMEternalx64vk.exe.backup'));
+    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
+        backups.push(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'));
     }
 
-    if (fs.existsSync(path.join(appPath, 'base', 'packagemapspec.json.backup'))) {
-        backups.push(path.join(appPath, 'base', 'packagemapspec.json.backup'));
+    if (fs.existsSync(path.join(gamePath, 'base', 'packagemapspec.json.backup'))) {
+        backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
     }
 
     backups.forEach((backup) => {
@@ -312,7 +315,7 @@ ipcMain.on('close-reset-window', () => {
         }
     });
 
-    const settingsPath = path.join(appPath, 'EternalModInjector Settings.txt');
+    const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 
     if (fs.existsSync(settingsPath)) {
         let settings = '';

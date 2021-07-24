@@ -5,9 +5,9 @@ import fileWatcher from 'chokidar';
 import admZip from 'adm-zip';
 import dragDrop from 'drag-drop';
 
-const appPath = process.argv.slice(-1)[0];
-const modsPath = path.join(appPath, 'Mods');
-const disabledModsPath = path.join(appPath, 'DisabledMods');
+const gamePath = process.argv.slice(-1)[0];
+const modsPath = path.join(gamePath, 'Mods');
+const disabledModsPath = path.join(gamePath, 'DisabledMods');
 
 // Class containing mod info
 class ModInfo {
@@ -231,7 +231,7 @@ function initButtons(): void {
 
     document.getElementById('advanced-button')!.addEventListener('click', () => {
         document.body.style.opacity = '0.5';
-        const send = fs.existsSync(path.join(appPath, 'EternalModInjector Settings.txt')) ? 'advanced-window' : 'settings-info-window';
+        const send = fs.existsSync(path.join(gamePath, 'EternalModInjector Settings.txt')) ? 'advanced-window' : 'settings-info-window';
         ipcRenderer.send(send);
     });
 
