@@ -14,7 +14,7 @@ else {
     argPath = process.argv[1] || '';
 }
 
-if (argPath === '--no-sandbox') {
+if (argPath.startsWith('--')) {
     argPath = '';
 }
 
