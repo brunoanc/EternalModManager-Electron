@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
-import { spawn } from 'child_process';
+import * as pty from 'node-pty';
 
 // Get application path
 let gamePath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
@@ -54,12 +54,17 @@ function createWindow(): void {
         height: process.platform === 'win32' ? 775 : 720,
         maximizable: false,
         resizable: false,
+        show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
             additionalArguments: [ gamePath ]
         }
+    });
+
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.show();
     });
 
     mainWindow.setMenu(null);
@@ -76,12 +81,17 @@ function createAdvancedWindow(): void {
         minimizable: false,
         maximizable: false,
         resizable: false,
+        show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
             additionalArguments: [ gamePath ]
         }
+    });
+
+    win.on('ready-to-show', () => {
+        win.show();
     });
 
     win.on('closed', () => {
@@ -102,6 +112,7 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         minimizable: false,
         maximizable: false,
         resizable: false,
+        show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
             nodeIntegration: true,
@@ -126,6 +137,11 @@ function loadMainWindow(): void {
     }
     else {
         mainWindow = newInfoWindow();
+
+        mainWindow.on('ready-to-show', () => {
+            mainWindow.show();
+        });
+
         mainWindow.setMenu(null);
         mainWindow.loadFile(path.join(__dirname, 'html', 'info.html'));
         errorType = 'tools-error';
@@ -136,9 +152,13 @@ function loadMainWindow(): void {
 function createInfoWindow(send: string): void {
     const win = newInfoWindow();
 
+    win.on('ready-to-show', () => {
+        win.show();
+    });
+
     win.on('close', () => {
         win.getParentWindow().webContents.send('restore-parent');
-    })
+    });
 
     win.setMenu(null);
     win.loadFile(path.join(__dirname, 'html', 'info.html'));
@@ -201,39 +221,59 @@ app.on('window-all-closed', () => {
     }
 });
 
-// Launch script before exiting, if specified
-app.on('will-quit', () => {
-    if (launchInjector) {
-        let command = '';
-        let args: string[];
-
-        if (process.platform === 'win32') {
-            command = 'start';
-            args = [ 'cmd.exe', '/c', path.resolve(injectorPath) ];
-        }
-        else {
-            command = 'bash';
-            args = [ path.resolve(injectorPath) ];
-        }
-
-        spawn(command, args, {
-            cwd: process.cwd(),
-            detached: true,
-            shell: true,
-            stdio: "inherit"
-        });
-    }
-});
-
 // Close current window
 ipcMain.on('close-window', () => {
     getCurrentWindow()!.close();
 });
 
-// Launch script and quit app
+// Launch script
 ipcMain.on('launch-script', () => {
-    launchInjector = true;
-    app.quit();
+    const win = new BrowserWindow({
+        parent: getCurrentWindow() || undefined,
+        modal: true,
+        width: 1000,
+        height: 500,
+        minimizable: false,
+        maximizable: false,
+        resizable: false,
+        show: false,
+        icon: path.join(__dirname, 'assets', 'icon.ico'),
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            additionalArguments: [ gamePath ]
+        }
+    });
+
+    let ptyProcess: pty.IPty;
+
+    win.on('ready-to-show', () => {
+        win.show();
+
+        ptyProcess = pty.spawn(process.platform === 'win32' ? 'powershell.exe' : 'bash', [], {
+            name: "xterm-color",
+            cwd: gamePath,
+            env: process.env as { [key: string]: string; }
+        });
+    
+        ptyProcess.onData((data: string) => {
+            win.webContents.send("terminal.incomingData", data);
+        });
+    
+        ptyProcess.write(injectorPath + '; exit\n');
+    });
+
+    win.on('close', () => {
+        try {
+            ptyProcess.kill();
+        }
+        catch { }
+
+        win.getParentWindow().webContents.send('restore-parent');
+    });
+
+    win.setMenu(null);
+    win.loadFile(path.join(__dirname, 'html', 'terminal.html'));
 });
 
 // Launch 'Advanced Info' window
@@ -242,6 +282,11 @@ ipcMain.on('advanced-window', createAdvancedWindow);
 // Launch info window if the settings file is missing
 ipcMain.on('settings-info-window', () => {
     const win = newInfoWindow();
+
+    win.on('ready-to-show', () => {
+        win.show();
+    });
+
     win.on('closed', createAdvancedWindow);
     win.setMenu(null);
     win.loadFile(path.join(__dirname, 'html', 'info.html'));
@@ -331,7 +376,7 @@ ipcMain.on('close-reset-window', () => {
 
     getCurrentWindow()!.close();
     createInfoWindow('reset-success-info');
-})
+});
 
 // Launch info window after saving settings file
 ipcMain.on('settings-saved-window', () => {

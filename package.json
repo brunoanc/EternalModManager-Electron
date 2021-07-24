@@ -10,6 +10,7 @@
     "copyfiles": "^2.4.1",
     "electron": "^13.1.5",
     "electron-builder": "^22.11.7",
+    "electron-rebuild": "^2.3.5",
     "typescript": "^4.3.5"
   },
   "dependencies": {
@@ -17,16 +18,19 @@
     "adm-zip": "^0.5.5",
     "chokidar": "^3.5.2",
     "clipboardy": "^2.3.0",
-    "drag-drop": "^7.2.0"
+    "drag-drop": "^7.2.0",
+    "node-pty": "^0.10.1",
+    "xterm": "^4.13.0",
+    "xterm-addon-fit": "^0.5.0"
   },
   "scripts": {
-    "compile": "tsc && copyfiles -u 1 -e \"src/**/*.ts\" \"src/**/*\" build",
+    "compile": "electron-rebuild && tsc && copyfiles -u 1 -e \"src/**/*.ts\" \"src/**/*\" build",
     "start": "npm run compile && electron .",
     "build": "npm run compile && electron-builder build --publish never"
   },
   "build": {
     "appId": "com.powerball253.eternalmodmanager",
-    "files" : [
+    "files": [
       "**/*",
       "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
       "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",

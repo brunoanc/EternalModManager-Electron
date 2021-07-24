@@ -226,6 +226,7 @@ function initDragAndDrop(): void {
 // Init the two main buttons
 function initButtons(): void {
     document.getElementById('launch-button')!.addEventListener('click', () => {
+        document.body.style.opacity = '0.5'
         ipcRenderer.send('launch-script');
     });
 
