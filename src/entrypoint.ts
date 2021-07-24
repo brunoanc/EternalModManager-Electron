@@ -256,8 +256,12 @@ ipcMain.on('launch-script', () => {
             env: process.env as { [key: string]: string; }
         });
     
-        ptyProcess.onData((data: string) => {
-            win.webContents.send("terminal.incomingData", data);
+        ptyProcess.onData((data) => {
+            win.webContents.send("terminal-incoming-data", data);
+        });
+
+        ipcMain.on("terminal-keystroke", (event, key) => {
+            ptyProcess.write(key);
         });
     
         ptyProcess.write(injectorPath + '; exit\n');

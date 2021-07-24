@@ -9,6 +9,10 @@ term.loadAddon(fitAddon);
 term.open(document.getElementById('terminal')!);
 fitAddon.fit();
 
-ipcRenderer.on("terminal.incomingData", (event, data) => {
+ipcRenderer.on("terminal-incoming-data", (event, data) => {
     term.write(data);
+});
+
+term.onData((data) => {
+    ipcRenderer.send("terminal-keystroke", data);
 });
