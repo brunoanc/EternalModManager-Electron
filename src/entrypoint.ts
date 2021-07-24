@@ -22,6 +22,7 @@ if (argPath.length > 0) {
     appPath = path.isAbsolute(argPath) ? argPath : path.join(appPath, argPath);
 }
 
+const configPath = path.join(app.getPath('userData'), 'config.json');
 const injectorPath = process.platform === 'win32' ? path.join(appPath, 'EternalModInjector.bat') : path.join(appPath, 'EternalModInjectorShell.sh');
 let launchInjector = false;
 let errorType = '';
@@ -113,6 +114,14 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
 // Load main process window
 function loadMainWindow(): void {
     if (fs.existsSync(path.join(appPath, 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
+        if (!fs.existsSync(configPath)) {
+            const settings = {
+                gamePath: path.resolve(appPath)
+            };
+
+            fs.writeFileSync(configPath, JSON.stringify(settings, null, 4));
+        }
+
         createWindow();
     }
     else {
@@ -156,6 +165,10 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
 
 // Load main window on app startup
 app.whenReady().then(() => {
+    if (fs.existsSync(configPath)) {
+        appPath = JSON.parse(fs.readFileSync(configPath, 'utf8')).gamePath || '';
+    }
+
     if (appPath.length === 0) {
         try {
             appPath = dialog.showOpenDialogSync({
