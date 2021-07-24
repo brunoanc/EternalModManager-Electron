@@ -26,6 +26,9 @@
   },
   "build": {
     "appId": "com.powerball253.eternalmodmanager",
+    "files" : [
+      "build/*"
+    ],
     "directories": {
       "buildResources": "resources"
     },
@@ -33,6 +36,7 @@
       "target": "portable"
     },
     "linux": {
+      "category": "Utility",
       "target": [
         "AppImage",
         "snap"
