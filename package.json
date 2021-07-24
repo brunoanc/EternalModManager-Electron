@@ -10,7 +10,6 @@
     "copyfiles": "^2.4.1",
     "electron": "^13.1.5",
     "electron-builder": "^22.11.7",
-    "electron-rebuild": "^2.3.5",
     "typescript": "^4.3.5"
   },
   "dependencies": {
@@ -19,33 +18,21 @@
     "chokidar": "^3.5.2",
     "clipboardy": "^2.3.0",
     "drag-drop": "^7.2.0",
+    "node-gyp": "^8.1.0",
     "node-pty": "^0.10.1",
     "xterm": "^4.13.0",
     "xterm-addon-fit": "^0.5.0"
   },
   "scripts": {
-    "compile": "electron-rebuild && tsc && copyfiles -u 1 -e \"src/**/*.ts\" \"src/**/*\" build",
+    "compile": "tsc && copyfiles -u 1 -e \"src/**/*.ts\" \"src/**/*\" build",
     "start": "npm run compile && electron .",
-    "build": "npm run compile && electron-builder build --publish never"
+    "build": "npm run compile && electron-builder build --publish never",
+    "postinstall": "electron-builder install-app-deps"
   },
   "build": {
     "appId": "com.powerball253.eternalmodmanager",
     "files": [
-      "**/*",
-      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
-      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
-      "!**/node_modules/*.d.ts",
-      "!**/node_modules/.bin",
-      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
-      "!.editorconfig",
-      "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
-      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
-      "!**/{appveyor.yml,.travis.yml,circle.yml}",
-      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
-      "!**/resources/*",
-      "!**/flatpak/*",
-      "!**/screenshots/*"
+
     ],
     "directories": {
       "buildResources": "resources"
