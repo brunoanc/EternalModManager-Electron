@@ -165,11 +165,11 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
 
 // Load main window on app startup
 app.whenReady().then(() => {
-    if (fs.existsSync(configPath)) {
-        appPath = JSON.parse(fs.readFileSync(configPath, 'utf8')).gamePath || '';
-    }
-
     if (appPath.length === 0) {
+        if (fs.existsSync(configPath)) {
+            appPath = JSON.parse(fs.readFileSync(configPath, 'utf8')).gamePath || '';
+        }
+
         try {
             appPath = dialog.showOpenDialogSync({
                 buttonLabel: 'Open',
