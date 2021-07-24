@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs';
-import { app, ipcMain, BrowserWindow } from 'electron';
+import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 import { spawn } from 'child_process';
 
 // Get application path
-let appPath = process.env['PORTABLE_EXECUTABLE_DIR'] || process.cwd();
+let appPath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
 let argPath = ''
 
 if (process.argv[0].endsWith('electron') || process.argv[0].endsWith('electron.exe')) {
@@ -156,6 +156,19 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
 
 // Load main window on app startup
 app.whenReady().then(() => {
+    if (appPath.length === 0) {
+        try {
+            appPath = dialog.showOpenDialogSync({
+                buttonLabel: 'Open',
+                title: 'Open the game directory',
+                properties: ['openDirectory', 'showHiddenFiles']
+            })![0];
+        }
+        catch {
+            appPath = process.cwd();
+        }
+    }
+
     loadMainWindow();
 
     app.on('activate', () => {
