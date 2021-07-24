@@ -16,10 +16,10 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://github.com/PowerBall253/EternalModManager/raw/main/flatpak/screenshot1.png</image>
+      <image type="source">https://github.com/PowerBall253/EternalModManager/raw/main/screenshots/main_window.png</image>
     </screenshot>
     <screenshot type="default">
-      <image type="source">https://github.com/PowerBall253/EternalModManager/raw/main/flatpak/screenshot2.png</image>
+      <image type="source">https://github.com/PowerBall253/EternalModManager/raw/main/screenshots/advanced_window.png</image>
     </screenshot>
   </screenshots>
   <releases>
