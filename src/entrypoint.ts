@@ -269,20 +269,20 @@ ipcMain.on('launch-script', () => {
             win.webContents.send('terminal-incoming-data', data);
         });
 
-        let stdinBuffer = ''
+        let stdinBuffer: string[] = []
 
         ipcMain.on('terminal-keystroke', (event, key: string) => {
             if (/^\w+$/.test(key)) {
-                stdinBuffer += key;
+                stdinBuffer.push(key);
             }
             else {
                 switch (key.charCodeAt(0)) {
                     case 13:
                         injectorProcess.stdin.write(stdinBuffer + '\n');
-                        stdinBuffer = '';
+                        stdinBuffer = [];
                         break;
                     case 127:
-                        stdinBuffer = stdinBuffer.length === 0 ? stdinBuffer.slice(0, -1) : '';
+                        stdinBuffer = stdinBuffer.length === 0 ? stdinBuffer.slice(0, -1) : [];
                         break;
                 }
             }

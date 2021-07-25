@@ -23,6 +23,8 @@ ipcRenderer.on('terminal-incoming-data', (event, data: string) => {
 // ANSI stdin implementation
 let stdinChars = 0;
 
+term.
+
 term.onKey((key) => {
     let realKey = '';
 
