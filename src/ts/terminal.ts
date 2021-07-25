@@ -4,6 +4,8 @@ import { FitAddon } from 'xterm-addon-fit';
 
 // Open xterm.js terminal
 const term = new Terminal({
+    rows: 100,
+    cols: 80,
     convertEol: true
 });
 
