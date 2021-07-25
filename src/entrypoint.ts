@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
+import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
-import * as pty from 'node-pty';
 
 // Get application path
 let gamePath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
@@ -24,7 +24,6 @@ if (argPath.length > 0) {
 
 const configPath = path.join(app.getPath('userData'), 'config.json');
 let injectorPath = ''
-let launchInjector = false;
 let errorType = '';
 let mainWindow: BrowserWindow;
 
@@ -228,56 +227,83 @@ ipcMain.on('close-window', () => {
 
 // Launch script
 ipcMain.on('launch-script', () => {
-    const win = new BrowserWindow({
-        parent: getCurrentWindow() || undefined,
-        modal: true,
-        width: 1000,
-        height: 500,
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        show: false,
-        icon: path.join(__dirname, 'assets', 'icon.ico'),
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            additionalArguments: [ gamePath ]
-        }
-    });
-
-    let ptyProcess: pty.IPty;
-
-    win.on('ready-to-show', () => {
-        win.show();
-
-        ptyProcess = pty.spawn(process.platform === 'win32' ? 'powershell.exe' : 'bash', [], {
-            name: "xterm-color",
+    if (process.platform === 'win32') {
+        spawn('start', [ 'cmd.exe', '/c', path.resolve(injectorPath) ], {
             cwd: gamePath,
-            env: process.env as { [key: string]: string; }
+            detached: true,
+            shell: true
         });
-    
-        ptyProcess.onData((data) => {
-            win.webContents.send("terminal-incoming-data", data);
+    }
+    else {
+        // Custom terminal implementation with xterm.js
+        const win = new BrowserWindow({
+            parent: getCurrentWindow() || undefined,
+            modal: true,
+            width: 1000,
+            height: 500,
+            minimizable: false,
+            maximizable: false,
+            resizable: false,
+            show: false,
+            icon: path.join(__dirname, 'assets', 'icon.ico'),
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+                additionalArguments: [gamePath]
+            }
         });
 
-        ipcMain.on("terminal-keystroke", (event, key) => {
-            ptyProcess.write(key);
+        let injectorProcess: ChildProcessWithoutNullStreams;
+
+        win.on('ready-to-show', () => {
+            win.show();
+
+            injectorProcess = spawn('bash', [path.resolve(injectorPath)], {
+                cwd: gamePath,
+                env: process.env,
+                shell: true
+            });
+
+            injectorProcess.stdout.on('data', (data: string) => {
+                win.webContents.send('terminal-incoming-data', data);
+            });
+
+            injectorProcess.stderr.on('data', (data: string) => {
+                win.webContents.send('terminal-incoming-data', data);
+            });
+
+            let stdinBuffer = ''
+
+            ipcMain.on('terminal-keystroke', (event, key: string) => {
+                if (/^\w+$/.test(key)) {
+                    stdinBuffer += key;
+                }
+                else {
+                    switch (key.charCodeAt(0)) {
+                        case 13:
+                            injectorProcess.stdin.write(stdinBuffer + '\n');
+                            stdinBuffer = '';
+                            break;
+                        case 127:
+                            stdinBuffer = stdinBuffer.length === 0 ? stdinBuffer.slice(0, -1) : '';
+                            break;
+                    }
+                }
+            });
         });
-    
-        ptyProcess.write(injectorPath + '; exit\n');
-    });
 
-    win.on('close', () => {
-        try {
-            ptyProcess.kill();
-        }
-        catch { }
+        win.on('close', () => {
+            try {
+                injectorProcess.kill();
+            }
+            catch {}
 
-        win.getParentWindow().webContents.send('restore-parent');
-    });
+            win.getParentWindow().webContents.send('restore-parent');
+        });
 
-    win.setMenu(null);
-    win.loadFile(path.join(__dirname, 'html', 'terminal.html'));
+        win.setMenu(null);
+        win.loadFile(path.join(__dirname, 'html', 'terminal.html'));
+    }
 });
 
 // Launch 'Advanced Info' window

@@ -18,16 +18,13 @@
     "chokidar": "^3.5.2",
     "clipboardy": "^2.3.0",
     "drag-drop": "^7.2.0",
-    "node-gyp": "^8.1.0",
-    "node-pty": "^0.10.1",
     "xterm": "^4.13.0",
     "xterm-addon-fit": "^0.5.0"
   },
   "scripts": {
     "compile": "tsc && copyfiles -u 1 -e \"src/**/*.ts\" \"src/**/*\" build",
     "start": "npm run compile && electron .",
-    "build": "npm run compile && electron-builder build --publish never",
-    "postinstall": "electron-builder install-app-deps"
+    "build": "npm run compile && electron-builder build --publish never"
   },
   "build": {
     "appId": "com.powerball253.eternalmodmanager",
