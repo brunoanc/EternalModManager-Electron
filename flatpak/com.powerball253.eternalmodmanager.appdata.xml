@@ -6,7 +6,7 @@
   <name>EternalModManager</name>
   <project_license>MIT</project_license>
   <developer_name>PowerBall253</developer_name>
-  <summary>Mod manager for DOOM Eternal, built with Electron.</summary>
+  <summary>Cross platform mod manager for DOOM Eternal.</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <url type="homepage">https://github.com/PowerBall253/EternalModManager</url>
   <url type="help">https://github.com/PowerBall253/EternalModManager/issues</url>

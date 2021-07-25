@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=EternalModManager
+Comment=Cross platform mod manager for DOOM Eternal.
 Exec=run.sh
 Type=Application
 Icon=com.powerball253.eternalmodmanager
