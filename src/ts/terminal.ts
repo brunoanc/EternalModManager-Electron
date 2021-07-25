@@ -16,7 +16,7 @@ term.open(document.getElementById('terminal')!);
 fitAddon.fit();
 
 // Write data to terminal
-ipcRenderer.on('terminal-incoming-data', (event, data: string) => {
+ipcRenderer.on('terminal-incoming-data', (event, data: Buffer) => {
     term.write(data);
 });
 

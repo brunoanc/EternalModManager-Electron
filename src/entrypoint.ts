@@ -261,11 +261,11 @@ ipcMain.on('launch-script', () => {
             shell: true
         });
 
-        injectorProcess.stdout.on('data', (data: string) => {
+        injectorProcess.stdout.on('data', (data: Buffer) => {
             win.webContents.send('terminal-incoming-data', data);
         });
 
-        injectorProcess.stderr.on('data', (data: string) => {
+        injectorProcess.stderr.on('data', (data: Buffer) => {
             win.webContents.send('terminal-incoming-data', data);
         });
 
