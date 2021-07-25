@@ -3,6 +3,11 @@ import fs from 'fs';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 
+// Add binaries to path
+if (process.env['FLATPAK_ID']) {
+    process.env['PATH'] += ':/var/run/host/usr/bin';
+}
+
 // Get application path
 let gamePath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
 let argPath = ''
@@ -50,7 +55,7 @@ function getCurrentWindow(): BrowserWindow | null {
 function createWindow(): void {
     mainWindow = new BrowserWindow({
         width: 610,
-        height: process.platform === 'win32' ? 775 : 720,
+        height: process.platform === 'win32' ? 775 : (process.env['FLATPAK_ID'] ? 746 : 720),
         maximizable: false,
         resizable: false,
         show: false,
@@ -76,7 +81,7 @@ function createAdvancedWindow(): void {
         parent: mainWindow,
         modal: true,
         width: 600,
-        height: process.platform === 'win32' ? 355 : 326,
+        height: process.platform === 'win32' ? 355 : (process.env['FLATPAK_ID'] ? 352 : 326),
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -107,7 +112,7 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         parent: parent || getCurrentWindow() || undefined,
         modal: true,
         width: 360,
-        height: process.platform === 'win32' ? 180 : 150,
+        height: process.platform === 'win32' ? 180 : (process.env['FLATPAK_ID'] ? 176 : 150),
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -240,7 +245,7 @@ ipcMain.on('launch-script', () => {
             parent: getCurrentWindow() || undefined,
             modal: true,
             width: 1000,
-            height: 500,
+            height: process.env['FLATPAK_ID'] ? 526 : 500,
             minimizable: false,
             maximizable: false,
             resizable: false,
