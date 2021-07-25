@@ -291,7 +291,7 @@ ipcMain.on('launch-script', () => {
 
     win.on('close', () => {
         try {
-            injectorProcess.kill();
+            injectorProcess.kill('SIGINT');
         }
         catch {}
 
