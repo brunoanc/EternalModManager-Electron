@@ -1,12 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
+import { spawn, spawnSync, ChildProcessWithoutNullStreams } from 'child_process'
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
-
-// Add binaries to path
-if (process.env['FLATPAK_ID']) {
-    process.env['PATH'] += ':/var/run/host/usr/bin';
-}
 
 // Get application path
 let gamePath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
@@ -252,7 +247,15 @@ ipcMain.on('launch-script', () => {
     win.on('ready-to-show', () => {
         win.show();
 
-        injectorProcess = spawn(process.platform == 'win32' ? 'cmd.exe' : 'bash', [path.resolve(injectorPath)], {
+        if (process.platform !== 'win32') {
+            spawnSync('chmod', ['+x', path.resolve(injectorPath)], {
+                cwd: gamePath,
+                env: process.env,
+                shell: true
+            })
+        }
+
+        injectorProcess = spawn(path.resolve(injectorPath), [], {
             cwd: gamePath,
             env: process.env,
             shell: true
