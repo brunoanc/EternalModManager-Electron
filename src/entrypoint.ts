@@ -206,6 +206,50 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
     return backups;
 }
 
+// Launches the mod injector script and sends it's output to xterm
+function launchScript(win: BrowserWindow, injectorProcess: ChildProcessWithoutNullStreams): void {
+    if (process.platform !== 'win32') {
+        spawnSync('chmod', ['+x', path.resolve(injectorPath)], {
+            cwd: gamePath,
+            env: process.env,
+            shell: true
+        })
+    }
+
+    injectorProcess = spawn(path.resolve(injectorPath), [], {
+        cwd: gamePath,
+        env: process.env,
+        shell: true
+    });
+
+    injectorProcess.stdout.on('data', (data: Buffer) => {
+        win.webContents.send('terminal-incoming-data', data);
+    });
+
+    injectorProcess.stderr.on('data', (data: Buffer) => {
+        win.webContents.send('terminal-incoming-data', data);
+    });
+
+    let stdinBuffer: string[] = []
+
+    ipcMain.on('terminal-keystroke', (event, key: string) => {
+        if (/^\w+$/.test(key)) {
+            stdinBuffer.push(key);
+        }
+        else {
+            switch (key.charCodeAt(0)) {
+                case 13:
+                    injectorProcess.stdin.write(stdinBuffer + '\n');
+                    stdinBuffer = [];
+                    break;
+                case 127:
+                    stdinBuffer = stdinBuffer.length === 0 ? stdinBuffer.slice(0, -1) : [];
+                    break;
+            }
+        }
+    });
+}
+
 // Load main window on app startup
 app.whenReady().then(() => {
     // If game path was not specified, try to get it from the config
@@ -262,7 +306,6 @@ ipcMain.on('launch-script', () => {
         winHeight = 526;
     }
 
-    // Custom terminal implementation with xterm.js
     const win = new BrowserWindow({
         parent: getCurrentWindow() || undefined,
         modal: true,
@@ -284,47 +327,7 @@ ipcMain.on('launch-script', () => {
 
     win.on('ready-to-show', () => {
         win.show();
-
-        if (process.platform !== 'win32') {
-            spawnSync('chmod', ['+x', path.resolve(injectorPath)], {
-                cwd: gamePath,
-                env: process.env,
-                shell: true
-            })
-        }
-
-        injectorProcess = spawn(path.resolve(injectorPath), [], {
-            cwd: gamePath,
-            env: process.env,
-            shell: true
-        });
-
-        injectorProcess.stdout.on('data', (data: Buffer) => {
-            win.webContents.send('terminal-incoming-data', data);
-        });
-
-        injectorProcess.stderr.on('data', (data: Buffer) => {
-            win.webContents.send('terminal-incoming-data', data);
-        });
-
-        let stdinBuffer: string[] = []
-
-        ipcMain.on('terminal-keystroke', (event, key: string) => {
-            if (/^\w+$/.test(key)) {
-                stdinBuffer.push(key);
-            }
-            else {
-                switch (key.charCodeAt(0)) {
-                    case 13:
-                        injectorProcess.stdin.write(stdinBuffer + '\n');
-                        stdinBuffer = [];
-                        break;
-                    case 127:
-                        stdinBuffer = stdinBuffer.length === 0 ? stdinBuffer.slice(0, -1) : [];
-                        break;
-                }
-            }
-        });
+        launchScript(win, injectorProcess);
     });
 
     win.on('close', () => {

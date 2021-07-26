@@ -51,6 +51,75 @@ function getZipsInDirectory(directory: string): string[] {
     return zips;
 }
 
+// Load the given mod's info into the given fragment
+function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
+    let modFile = mod[0];
+    let modInfo: ModInfo;
+    
+    try {
+        let zip = new admZip(path.join(modsPath, modFile));
+        let zipEntry = zip.getEntry('EternalMod.json');
+
+        if (zipEntry) {
+            let json = JSON.parse(zip.readAsText(zipEntry));
+            modInfo = new ModInfo(json.name, json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
+            
+        }
+        else {
+            throw new Error('Error');
+        }
+    }
+    catch (err) {
+        modInfo = new ModInfo(modFile);
+    }
+
+    let checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = mod[1];
+    checkbox.checked = mod[1] === 'mod';
+
+    checkbox.addEventListener('change', (event: Event) => {
+        let isChecked = true;
+        let src = path.join(disabledModsPath, modFile);
+        let dest = path.join(modsPath, modFile);
+
+        if (!(event.currentTarget as HTMLInputElement).checked) {
+            isChecked = false;
+            src = path.join(modsPath, modFile);
+            dest = path.join(disabledModsPath, modFile);
+        }
+
+        try {
+            fs.rename(src, dest, (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
+        }
+        catch (err) {
+            (event.currentTarget! as HTMLInputElement).checked = !isChecked;
+        }
+    });
+
+    let button = document.createElement('button');
+    button.className = 'mod-button';
+    button.appendChild(checkbox);
+    button.appendChild(document.createTextNode(modFile));
+
+    button.addEventListener('click', () => {
+        document.getElementById('mod-name')!.innerHTML = modInfo.name;
+        document.getElementById('mod-author')!.innerHTML = modInfo.author;
+        document.getElementById('mod-description')!.innerHTML = modInfo.description;
+        document.getElementById('mod-version')!.innerHTML = modInfo.version;
+        document.getElementById('mod-min-version')!.innerHTML = modInfo.requiredVersion;
+        document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
+    });
+    
+    let modLI = document.createElement('li');
+    modLI.appendChild(button);
+    fragment.appendChild(modLI);
+}
+
 // Get all mods in given directory and add them to the mod list
 function getMods(): void {
     const fragment = document.createDocumentFragment();
@@ -69,75 +138,7 @@ function getMods(): void {
     });
 
     mods.forEach((mod) => {
-        let modFile = mod[0];
-        let modInfo: ModInfo;
-        
-        try {
-            let zip = new admZip(path.join(modsPath, modFile));
-            let zipEntry = zip.getEntry('EternalMod.json');
-
-            if (zipEntry) {
-                let json = JSON.parse(zip.readAsText(zipEntry));
-                modInfo = new ModInfo(json.name, json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
-                
-            }
-            else {
-                throw new Error('Error');
-            }
-        }
-        catch (err) {
-            modInfo = new ModInfo(modFile);
-        }
-
-        let checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = mod[1];
-        checkbox.checked = mod[1] === 'mod';
-
-        checkbox.addEventListener('change', (event: Event) => {
-            if ((event.currentTarget! as HTMLInputElement).checked) {
-                try {
-                    fs.rename(path.join(disabledModsPath, modFile), path.join(modsPath, modFile), (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                }
-                catch (err) {
-                    (event.currentTarget! as HTMLInputElement).checked = false;
-                }
-            }
-            else {
-                try {
-                    fs.rename(path.join(modsPath, modFile), path.join(disabledModsPath, modFile), (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                }
-                catch (err) {
-                    (event.currentTarget! as HTMLInputElement).checked = true;
-                }
-            }
-        });
-
-        let button = document.createElement('button');
-        button.className = 'mod-button';
-        button.appendChild(checkbox);
-        button.appendChild(document.createTextNode(modFile));
-
-        button.addEventListener('click', () => {
-            document.getElementById('mod-name')!.innerHTML = modInfo.name;
-            document.getElementById('mod-author')!.innerHTML = modInfo.author;
-            document.getElementById('mod-description')!.innerHTML = modInfo.description;
-            document.getElementById('mod-version')!.innerHTML = modInfo.version;
-            document.getElementById('mod-min-version')!.innerHTML = modInfo.requiredVersion;
-            document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
-        });
-        
-        let modLI = document.createElement('li');
-        modLI.appendChild(button);
-        fragment.appendChild(modLI);
+        loadModIntoFragment(fragment, mod);
     });
 
     const modsList = document.getElementById('mods-list')!;
@@ -218,7 +219,9 @@ function initDragAndDrop(): void {
                 return;
             }
 
-            fs.copyFile(file.path, path.join(modsPath, path.basename(file.path)), (err) => {});
+            fs.copyFile(file.path, path.join(modsPath, path.basename(file.path)), () => {
+                // No need for error handling, the watcher will take care of it
+            });
         });
     });
 }
