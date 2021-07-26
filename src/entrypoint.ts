@@ -129,14 +129,11 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
 // Load main process window
 function loadMainWindow(): void {
     if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe')) && fs.existsSync(injectorPath)) {
-        if (!fs.existsSync(configPath)) {
-            const settings = {
-                gamePath: path.resolve(gamePath)
-            };
+        const settings = {
+            gamePath: path.resolve(gamePath)
+        };
 
-            fs.writeFileSync(configPath, JSON.stringify(settings, null, 4));
-        }
-
+        fs.writeFileSync(configPath, JSON.stringify(settings, null, 4));
         createWindow();
     }
     else {
