@@ -1,6 +1,6 @@
 {
   "name": "eternalmodmanager",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Cross platform mod manager for DOOM Eternal.",
   "main": "build/entrypoint.js",
   "author": "PowerBall253",
