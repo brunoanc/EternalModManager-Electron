@@ -89,7 +89,7 @@ if (!fs.existsSync(settingsPath)) {
         }
 
         (document.getElementById(checkbox)! as HTMLInputElement).disabled = true;
-        (document.getElementById(checkbox.slice(0, -8) + 'label')! as HTMLElement).style.color = 'gray';
+        document.getElementById(checkbox.slice(0, -8) + 'label')!.style.color = 'gray';
     });
 
     throw new Error('Settings not found, stop script execution');
@@ -110,7 +110,6 @@ fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((l
 Object.keys(settingsValuesMap).forEach((setting) => {
     if (setting === 'GAME_PARAMETERS') {
         (document.getElementById('args-input')! as HTMLInputElement).value = settingsMap[':GAME_PARAMETERS'] || '';
-        return;
     }
     else {
         (document.getElementById(settingsValuesMap[setting])! as HTMLInputElement).checked = settingsMap[':' + setting] === '1';

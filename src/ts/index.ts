@@ -176,8 +176,8 @@ function initWatcher(): void {
         watcherReady = true
     });
     
-    watcher.on('all', (event, path) => {
-        if ((!path.startsWith(modsPath) && !path.startsWith(disabledModsPath)) || !watcherReady) {
+    watcher.on('all', (event, filePath) => {
+        if ((!filePath.startsWith(modsPath) && !filePath.startsWith(disabledModsPath)) || !watcherReady) {
             return;
         }
         

@@ -48,9 +48,18 @@ function getCurrentWindow(): BrowserWindow | null {
 
 // Create main window
 function createWindow(): void {
+    let winHeight = 720;
+
+    if (process.platform == 'win32') {
+        winHeight = 775;
+    }
+    else if (process.env['FLATPAK_ID']) {
+        winHeight = 746;
+    }
+
     mainWindow = new BrowserWindow({
         width: 610,
-        height: process.platform === 'win32' ? 775 : (process.env['FLATPAK_ID'] ? 746 : 720),
+        height: winHeight,
         maximizable: false,
         resizable: false,
         show: false,
@@ -72,11 +81,20 @@ function createWindow(): void {
 
 // Create 'Advanced Info' window
 function createAdvancedWindow(): void {
+    let winHeight = 326;
+
+    if (process.platform == 'win32') {
+        winHeight = 355;
+    }
+    else if (process.env['FLATPAK_ID']) {
+        winHeight = 352;
+    }
+
     const win = new BrowserWindow({
         parent: mainWindow,
         modal: true,
         width: 600,
-        height: process.platform === 'win32' ? 355 : (process.env['FLATPAK_ID'] ? 352 : 326),
+        height: winHeight,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -103,11 +121,20 @@ function createAdvancedWindow(): void {
 
 // Create new info/warning/error window
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
+    let winHeight = 150;
+
+    if (process.platform == 'win32') {
+        winHeight = 180;
+    }
+    else if (process.env['FLATPAK_ID']) {
+        winHeight = 176;
+    }
+
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
         modal: true,
         width: 360,
-        height: process.platform === 'win32' ? 180 : (process.env['FLATPAK_ID'] ? 176 : 150),
+        height: winHeight,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -224,12 +251,23 @@ ipcMain.on('close-window', () => {
 
 // Launch script
 ipcMain.on('launch-script', () => {
+    let winWidth = 1000;
+    let winHeight = 500;
+
+    if (process.platform == 'win32') {
+        winWidth = 1005;
+        winHeight = 530;
+    }
+    else if (process.env['FLATPAK_ID']) {
+        winHeight = 526;
+    }
+
     // Custom terminal implementation with xterm.js
     const win = new BrowserWindow({
         parent: getCurrentWindow() || undefined,
         modal: true,
-        width: process.platform === 'win32' ? 1005 : 1000,
-        height: process.platform === 'win32' ? 530 : (process.env['FLATPAK_ID'] ? 526 : 500),
+        width: winWidth,
+        height: winHeight,
         minimizable: false,
         maximizable: false,
         resizable: false,
