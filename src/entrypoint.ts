@@ -228,8 +228,8 @@ ipcMain.on('launch-script', () => {
     const win = new BrowserWindow({
         parent: getCurrentWindow() || undefined,
         modal: true,
-        width: 1000,
-        height: process.env['FLATPAK_ID'] ? 526 : 500,
+        width: process.platform === 'win32' ? 1005 : 1000,
+        height: process.platform === 'win32' ? 530 : (process.env['FLATPAK_ID'] ? 526 : 500),
         minimizable: false,
         maximizable: false,
         resizable: false,

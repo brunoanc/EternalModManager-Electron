@@ -5,10 +5,10 @@ import { shell, ipcRenderer } from 'electron';
 
 const gamePath = process.argv.slice(-1)[0];
 
-// Custom linux styling
-if (process.platform === 'linux') {
-    (document.getElementsByClassName('right')[0] as HTMLElement).style.margin = '10px 0 0 0';
-    (document.getElementsByClassName('left')[0] as HTMLElement).style.margin = '15px 0 0 15px';
+// Custom windows styling
+if (process.platform === 'win32') {
+    (document.getElementsByClassName('right')[0] as HTMLElement).style.margin = 'initial';
+    (document.getElementsByClassName('left')[0] as HTMLElement).style.margin = '13px 0 0 15px';
 }
 
 // Add functionality to buttons

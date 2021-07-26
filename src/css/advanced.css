@@ -9,7 +9,7 @@ body {
 .left {
     width: 42.5%;
     height: 270px;
-    margin: 13px 0 0 15px;
+    margin: 15px 0 0 15px;
     vertical-align: center;
     align-items: center;
 }
@@ -30,6 +30,7 @@ body {
 .right {
     width: 57%;
     height: 280px;
+    margin: 10px 0 0 0;
 }
 
 #vl {
