@@ -207,7 +207,7 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
 }
 
 // Launches the mod injector script and sends it's output to xterm
-function launchScript(win: BrowserWindow, injectorProcess: ChildProcessWithoutNullStreams): void {
+function launchScript(win: BrowserWindow): void {
     if (process.platform !== 'win32') {
         spawnSync('chmod', ['+x', path.resolve(injectorPath)], {
             cwd: gamePath,
@@ -216,7 +216,7 @@ function launchScript(win: BrowserWindow, injectorProcess: ChildProcessWithoutNu
         })
     }
 
-    injectorProcess = spawn(path.resolve(injectorPath), [], {
+    let injectorProcess = spawn(path.resolve(injectorPath), [], {
         cwd: gamePath,
         env: process.env,
         shell: true
@@ -247,6 +247,15 @@ function launchScript(win: BrowserWindow, injectorProcess: ChildProcessWithoutNu
                     break;
             }
         }
+    });
+
+    win.on('close', () => {
+        try {
+            injectorProcess.kill('SIGINT');
+        }
+        catch {}
+
+        win.getParentWindow().webContents.send('restore-parent');
     });
 }
 
@@ -327,16 +336,7 @@ ipcMain.on('launch-script', () => {
 
     win.on('ready-to-show', () => {
         win.show();
-        launchScript(win, injectorProcess);
-    });
-
-    win.on('close', () => {
-        try {
-            injectorProcess.kill('SIGINT');
-        }
-        catch {}
-
-        win.getParentWindow().webContents.send('restore-parent');
+        launchScript(win);
     });
 
     win.setMenu(null);
