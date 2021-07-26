@@ -59,12 +59,15 @@
       ]
     },
     "snap": {
+      "title": "EternalModManager",
       "artifactName": "EternalModManager.snap",
-      "title": "eternalmodmanager",
-      "confinement": "classic",
+      "confinement": "strict",
       "summary": "Mod manager for DOOM Eternal.",
       "grade": "stable",
-      "useTemplateApp": true
+      "plugs": [
+        "default",
+        "removable-media"
+      ]
     },
     "appImage": {
       "artifactName": "EternalModManager.AppImage"
