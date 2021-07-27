@@ -1,6 +1,6 @@
 {
   "name": "eternalmodmanager",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Cross platform mod manager for DOOM Eternal.",
   "main": "build/entrypoint.js",
   "author": "PowerBall253",
@@ -66,7 +66,13 @@
       "grade": "stable",
       "plugs": [
         "default",
-        "removable-media"
+        "removable-media",
+        {
+          "steam-files": {
+            "interface": "personal-files",
+            "write": [ "$HOME/.var/app/com.valvesoftware.Steam", "$HOME/.local/share/Steam", "$HOME/.steam" ]
+          }
+        }
       ]
     },
     "appImage": {
