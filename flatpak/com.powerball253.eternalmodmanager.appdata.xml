@@ -21,8 +21,12 @@
     <screenshot type="default">
       <image type="source">https://github.com/PowerBall253/EternalModManager/raw/main/screenshots/advanced_window.png</image>
     </screenshot>
+    <screenshot type="default">
+      <image type="source">https://github.com/PowerBall253/EternalModManager/raw/main/screenshots/terminal_window.png</image>
+    </screenshot>
   </screenshots>
   <releases>
+    <release version="1.4.6" date="2021-07-28"/>
     <release version="1.4.5" date="2021-07-26"/>
     <release version="1.4.4" date="2021-07-26"/>
     <release version="1.4.3" date="2021-07-25"/>
