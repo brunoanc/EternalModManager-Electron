@@ -3,6 +3,20 @@
 
 Mod manager for DOOM Eternal, built with Electron.
 
+## Installing
+### Flatpak (Linux only)
+The app is currently available in [Flathub](https://flathub.org/apps/details/com.powerball253.eternalmodmanager). To install it, make sure you have `flatpak` installed, then run
+```
+flatpak install flathub com.powerball253.eternalmodmanager
+```
+and reboot your system. The app should now be available in your DE's menu, or you can run it in your terminal with the following command:
+```
+flatpak run com.powerball253.eternalmodmanager
+```
+
+### Portable executable
+Download the latest .exe (on Windows) or AppImage (on Linux) file from the release section to your DOOM Eternal directory.
+
 ## Running
 First, make sure you have the latest LTS version of NodeJS and `npm` installed. Then clone the repo, and run the following commands:
 
