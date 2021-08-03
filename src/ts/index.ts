@@ -247,7 +247,7 @@ function initButtons(): void {
 }
 
 // Change HTML title
-document.title += ` v${require(path.join(__dirname, '..', '..', 'package.json')).version} by PowerBall253`;
+document.title += ` v${JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')).version} by PowerBall253`;
 
 initWatcher();
 initCheckList();
