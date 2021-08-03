@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import clipboardy from 'clipboardy';
-import { shell, ipcRenderer } from 'electron';
+import { shell, clipboard, ipcRenderer } from 'electron';
 
 const gamePath = process.argv.slice(-1)[0];
 
@@ -48,7 +47,7 @@ document.getElementById('reset-backups')!.addEventListener('click', () => {
 });
 
 document.getElementById('copy-json')!.addEventListener('click', () => {
-    clipboardy.writeSync('{\n\t"name":"",\n\t"author":"",\n\t"description":"",\n\t"version":"",\n\t"loadPriority":0,\n\t"requiredVersion":8\n}');
+    clipboard.writeText('{\n\t"name": "",\n\t"author": "",\n\t"description": "",\n\t"version": "",\n\t"loadPriority": 0,\n\t"requiredVersion": 10\n}');
 
     document.body.style.opacity = '0.5';
     ipcRenderer.send('clipboard-window');
