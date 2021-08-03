@@ -57,7 +57,9 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     let modInfo: ModInfo;
     
     try {
-        let zip = new admZip(path.join(modsPath, modFile));
+        let zipPath = mod[1] == 'mod' ? modsPath : disabledModsPath;
+        let zip = new admZip(path.join(zipPath, modFile));
+        
         let zipEntry = zip.getEntry('EternalMod.json');
 
         if (zipEntry) {
