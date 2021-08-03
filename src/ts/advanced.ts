@@ -5,9 +5,9 @@ import { shell, clipboard, ipcRenderer } from 'electron';
 const gamePath = process.argv.slice(-1)[0];
 
 // Disable JSON copy button on flatpak/snap - no clipboard writing support
-if (process.env['FLATPAK_ID'] || process.env['SNAP']) {
+/*if (process.env['FLATPAK_ID'] || process.env['SNAP']) {
     (document.getElementById('copy-json') as HTMLInputElement).disabled = true;
-}
+}*/
 
 // Custom windows styling
 if (process.platform === 'win32') {
