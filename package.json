@@ -56,7 +56,10 @@
       "target": [
         "AppImage",
         "snap"
-      ]
+      ],
+      "desktop": {
+        "Name": "EternalModManager"
+      }
     },
     "snap": {
       "title": "EternalModManager",
