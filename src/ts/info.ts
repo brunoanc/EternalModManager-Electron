@@ -10,16 +10,22 @@ if (process.platform === 'win32') {
     document.getElementById('ok-button')!.style.left = '255px';
 }
 
+ipcRenderer.on('snap-connections-error', () => {
+    document.title = 'Error';
+    (document.getElementById('error-img') as HTMLImageElement).src = '../assets/error.svg';
+    document.getElementById('text')!.innerHTML = 'Steam files interface is not connected.<br>Run <strong>snap connect eternalmodmanager:steam-files</strong>, then try again.';
+});
+
 // Set the info window depending on the sent message
 ipcRenderer.on('tools-error', () => {
     document.title = 'Error';
     (document.getElementById('error-img') as HTMLImageElement).src = '../assets/error.svg';
 
     if (!fs.existsSync(gamePath) || !fs.lstatSync(gamePath).isDirectory) {
-        document.getElementById('text')!.innerHTML = 'Can\'t find the game directory.<br>This tool must be launched in the game directory, or have it passed as an argument.';
+        document.getElementById('text')!.innerHTML = 'Can\'t find the game directory.<br>Did you select/pass the correct directory?';
     }
     else if (!fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe'))) {
-        document.getElementById('text')!.innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>This tool must be launched in the game directory, or have it passed as an argument.';
+        document.getElementById('text')!.innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>Did you select/pass the correct directory?';
     }
     else if (process.platform === 'linux') {
         document.getElementById('text')!.innerHTML = 'Couldn\'t find the modding tools, do you want to download them?';

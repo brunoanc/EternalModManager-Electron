@@ -128,11 +128,11 @@ function getMods(): void {
     const mods: string[][] = [];
 
     getZipsInDirectory(modsPath).forEach((modFile) => {
-        mods.push([ modFile, 'mod' ]);
+        mods.push([modFile, 'mod']);
     });
 
     getZipsInDirectory(disabledModsPath).forEach((modFile) => {
-        mods.push([ modFile, 'disabled-mod' ]);
+        mods.push([modFile, 'disabled-mod']);
     });
 
     mods.sort((a, b) => {

@@ -67,7 +67,7 @@ function createWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            additionalArguments: [ gamePath ]
+            additionalArguments: [gamePath]
         }
     });
 
@@ -103,7 +103,7 @@ function createAdvancedWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            additionalArguments: [ gamePath ]
+            additionalArguments: [gamePath]
         }
     });
 
@@ -143,7 +143,7 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            additionalArguments: [ gamePath ]
+            additionalArguments: [gamePath]
         }
     });
 }
@@ -261,6 +261,28 @@ function launchScript(win: BrowserWindow): void {
 
 // Load main window on app startup
 app.whenReady().then(() => {
+    // If running through snap, make sure steam-files is connected
+    if (process.env['SNAP']) {
+        let steamFilesConnected = spawnSync('snapctl', ['is-connected', 'steam-files'], {
+            env: process.env,
+            shell: true
+        }).status === 0;
+
+        if (!steamFilesConnected) {
+            mainWindow = newInfoWindow();
+
+            mainWindow.on('ready-to-show', () => {
+                mainWindow.show();
+            });
+
+            mainWindow.setMenu(null);
+            mainWindow.loadFile(path.join(__dirname, 'html', 'info.html'));
+            errorType = 'snap-connections-error';
+
+            return;
+        }
+    }
+
     // If game path was not specified, try to get it from the config
     if (gamePath.length === 0 && fs.existsSync(configPath)) {
         gamePath = JSON.parse(fs.readFileSync(configPath, 'utf8')).gamePath || '';
