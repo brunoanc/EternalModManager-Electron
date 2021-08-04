@@ -10,13 +10,13 @@ if (process.platform === 'win32') {
     document.getElementById('ok-button')!.style.left = '255px';
 }
 
+// Set the info window depending on the sent message
 ipcRenderer.on('snap-connections-error', () => {
     document.title = 'Error';
     (document.getElementById('error-img') as HTMLImageElement).src = '../assets/error.svg';
     document.getElementById('text')!.innerHTML = 'Steam files interface is not connected.<br>Run <strong>snap connect eternalmodmanager:steam-files</strong>, then try again.';
 });
 
-// Set the info window depending on the sent message
 ipcRenderer.on('tools-error', () => {
     document.title = 'Error';
     (document.getElementById('error-img') as HTMLImageElement).src = '../assets/error.svg';
