@@ -22,14 +22,18 @@ ipcRenderer.on('tools-error', () => {
     (document.getElementById('error-img') as HTMLImageElement).src = '../assets/error.svg';
 
     if (!fs.existsSync(gamePath) || !fs.lstatSync(gamePath).isDirectory) {
+        // Game directory not found
         document.getElementById('text')!.innerHTML = 'Can\'t find the game directory.<br>Did you select/pass the correct directory?';
     }
     else if (!fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe'))) {
+        // Game exe not found
         document.getElementById('text')!.innerHTML = 'Can\'t find DOOMEternalx64vk.exe.<br>Did you select/pass the correct directory?';
     }
     else if (process.platform === 'linux') {
+        // Tools not found, prompt the user to download them
         document.getElementById('text')!.innerHTML = 'Couldn\'t find the modding tools, do you want to download them?';
 
+        // Setup 'Yes' button
         const button = document.getElementById('ok-button')!;
         button.innerHTML = 'No';
 
@@ -41,6 +45,7 @@ ipcRenderer.on('tools-error', () => {
         yesButton.id = 'yes-button';
 
         yesButton.addEventListener('click', () => {
+            // Download script from github
             document.title = 'Information';
             (document.getElementById('error-img') as HTMLImageElement).src = '../assets/info.svg';
             document.getElementById('text')!.innerHTML = 'Downloading modding tools...';
@@ -66,6 +71,7 @@ ipcRenderer.on('tools-error', () => {
         document.body.appendChild(yesButton);
     }
     else {
+        // Tools not found
         document.getElementById('text')!.innerHTML = 'Can\'t find EternalModInjector.bat.<br>Make sure that the modding tools are installed.';
     }
 });
@@ -89,6 +95,7 @@ ipcRenderer.on('restore-info', () => {
         'This process might take a while depending on the speed of your disk, so please be patient.<br>' +
         'Are you sure you want to continue?';
     
+    // Setup 'Yes' button
     const button = document.getElementById('ok-button')!;
     button.innerHTML = 'No';
 
@@ -133,6 +140,7 @@ ipcRenderer.on('reset-info', () => {
         'The next time mods are injected the backups will be re-created, so make sure to verify your game files after doing this.<br>' +
         'Are you sure you want to continue?';
     
+    // Setup 'Yes' button
     const button = document.getElementById('ok-button');
     button!.innerHTML = 'No';
 

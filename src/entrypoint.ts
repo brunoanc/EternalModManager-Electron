@@ -3,7 +3,7 @@ import fs from 'fs';
 import { spawn, spawnSync, ChildProcessWithoutNullStreams } from 'child_process'
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 
-// Get application path
+// Get game path
 let gamePath: string = process.env['PORTABLE_EXECUTABLE_DIR'] || '';
 let argPath = ''
 
@@ -47,7 +47,7 @@ function getCurrentWindow(): BrowserWindow | null {
 }
 
 // Create main window
-function createWindow(): void {
+function createMainWindow(): void {
     let winHeight = 720;
 
     if (process.platform == 'win32') {
@@ -156,7 +156,7 @@ function loadMainWindow(): void {
         };
 
         fs.writeFileSync(configPath, JSON.stringify(settings, null, 4));
-        createWindow();
+        createMainWindow();
     }
     else {
         mainWindow = newInfoWindow();
@@ -206,9 +206,10 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
     return backups;
 }
 
-// Launches the mod injector script and sends it's output to xterm
+// Launch the mod injector script and send output to xterm
 function launchScript(win: BrowserWindow): void {
     if (process.platform !== 'win32') {
+        // Give executable permissions to the script
         spawnSync('chmod', ['+x', path.resolve(injectorPath)], {
             cwd: gamePath,
             env: process.env,
@@ -216,12 +217,14 @@ function launchScript(win: BrowserWindow): void {
         })
     }
 
+    // Spawn injector process
     let injectorProcess = spawn(path.resolve(injectorPath), [], {
         cwd: gamePath,
         env: process.env,
         shell: true
     });
 
+    // Send output to xterm
     injectorProcess.stdout.on('data', (data: Buffer) => {
         win.webContents.send('terminal-incoming-data', data);
     });
@@ -230,6 +233,7 @@ function launchScript(win: BrowserWindow): void {
         win.webContents.send('terminal-incoming-data', data);
     });
 
+    // Handle stdin
     let stdinBuffer: string[] = []
 
     ipcMain.on('terminal-keystroke', (event, key: string) => {
@@ -249,6 +253,7 @@ function launchScript(win: BrowserWindow): void {
         }
     });
 
+    // Kill process if window is closed
     win.on('close', () => {
         try {
             injectorProcess.kill('SIGINT');
@@ -314,9 +319,7 @@ app.whenReady().then(() => {
 
 // Close app on exit
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+    app.quit();
 });
 
 // Close current window
@@ -337,6 +340,7 @@ ipcMain.on('launch-script', () => {
         winHeight = 526;
     }
 
+    // Create terminal window
     const win = new BrowserWindow({
         parent: getCurrentWindow() || undefined,
         modal: true,
@@ -357,6 +361,7 @@ ipcMain.on('launch-script', () => {
     let injectorProcess: ChildProcessWithoutNullStreams;
 
     win.on('ready-to-show', () => {
+        // Launch script
         win.show();
         launchScript(win);
     });
@@ -397,6 +402,7 @@ ipcMain.on('close-restore-window', () => {
     errorType = 'restoring-info';
     getCurrentWindow()!.webContents.send(errorType);
 
+    // Get backup files
     const backups = getBackups(path.join(gamePath, 'base'));
 
     if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
@@ -407,6 +413,7 @@ ipcMain.on('close-restore-window', () => {
         backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
     }
 
+    // Restore backups
     backups.forEach((backup) => {
         try {
             fs.copyFileSync(backup, backup.slice(0, -7));
@@ -430,6 +437,7 @@ ipcMain.on('close-reset-window', () => {
     errorType = 'resetting-info';
     getCurrentWindow()!.webContents.send(errorType);
 
+    // Get backup files
     const backups = getBackups(path.join(gamePath, 'base'));
 
     if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
@@ -440,6 +448,7 @@ ipcMain.on('close-reset-window', () => {
         backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
     }
 
+    // Delete backups
     backups.forEach((backup) => {
         try {
             fs.unlinkSync(backup);
@@ -452,6 +461,7 @@ ipcMain.on('close-reset-window', () => {
     const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 
     if (fs.existsSync(settingsPath)) {
+        // Remove backup file entries from injector settings file
         let settings = '';
 
         fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean).forEach((line) => {

@@ -31,6 +31,7 @@ class ModInfo {
     }
 }
 
+// Keywords for online safety check
 const onlineSafeModNameKeywords: string[] = [
     '/eternalmod/', '.tga', '.png', '.swf', '.bimage', '/advancedscreenviewshake/', '/audiolog/', '/audiologstory/', '/automap/', '/automapplayerprofile/',
     '/automapproperties/', '/automapsoundprofile/', '/env/', '/font/', '/fontfx/', '/fx/', '/gameitem/', '/globalfonttable/', '/gorebehavior/',
@@ -107,6 +108,7 @@ function getZipsInDirectory(directory: string): string[] {
     const zips: string[] = [];
     let dirContent: string[] = [];
 
+    // Check directory for zip files
     try {
         dirContent = fs.readdirSync(directory);
     }
@@ -131,6 +133,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     let modPath = path.join(mod[1] == 'mod' ? modsPath : disabledModsPath, modFile);
     let modInfo: ModInfo;
     
+    // Read mod info from EternalMod.json
     try {
         let modZip = new admZip(modPath);
         let eternalModJson = modZip.getEntry('EternalMod.json');
@@ -147,6 +150,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         modInfo = new ModInfo(modFile, isOnlineSafe(modPath));
     }
 
+    // Create mod list element
     let checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = mod[1];
@@ -189,6 +193,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
     });
     
+    // Append mod li to fragment
     let modLI = document.createElement('li');
     modLI.appendChild(button);
     fragment.appendChild(modLI);
@@ -238,6 +243,7 @@ function makeModDirectories(): void {
 function initWatcher(): void {
     makeModDirectories();
 
+    // Watch the game directory
     let watcher = fileWatcher.watch(path.join(modsPath, '..'), {
         ignored: /[\/\\]\./,
         persistent: true,
@@ -246,9 +252,10 @@ function initWatcher(): void {
 
     let watcherReady = false;
     
+    // Get mods and display them when ready
     watcher.on('ready', () => {
-        getMods()
-        watcherReady = true
+        getMods();
+        watcherReady = true;
     });
     
     watcher.on('all', (event, filePath) => {
@@ -256,6 +263,7 @@ function initWatcher(): void {
             return;
         }
         
+        // Get new mods
         makeModDirectories();
         getMods();
     });
@@ -263,10 +271,12 @@ function initWatcher(): void {
 
 // Add functionality to 'Enable/Disable All' checkbox
 function initCheckList(): void {
+    // Get mods & checkbox element
     const mods = document.getElementsByClassName('mod');
     const disabledMods = document.getElementsByClassName('disabled-mod');
     const topCheckbox = document.getElementById('top-right-checkbox')!;
 
+    // Make checkbox enable/disable the rest of the checkboxes
     topCheckbox.addEventListener('change', (event) => {
         if ((event.currentTarget! as HTMLInputElement).checked) {
             while (disabledMods.length > 0) {
@@ -303,17 +313,20 @@ function initDragAndDrop(): void {
 // Init the two main buttons
 function initButtons(): void {
     document.getElementById('launch-button')!.addEventListener('click', () => {
+        // Set opacity and launch terminal window
         document.body.style.opacity = '0.5'
         ipcRenderer.send('launch-script');
     });
 
     document.getElementById('advanced-button')!.addEventListener('click', () => {
+        // Set opacity and launch advanced window
         document.body.style.opacity = '0.5';
         const send = fs.existsSync(path.join(gamePath, 'EternalModInjector Settings.txt')) ? 'advanced-window' : 'settings-info-window';
         ipcRenderer.send(send);
     });
 
     ipcRenderer.on('restore-parent', () => {
+        // Restore main window
         document.body.style.opacity = '1';
     });
 }
