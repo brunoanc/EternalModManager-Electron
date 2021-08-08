@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { ipcRenderer } from 'electron';
 import fileWatcher from 'chokidar';
-import admZip from 'adm-zip';
+import admZip, { IZipEntry } from 'adm-zip';
 import dragDrop from 'drag-drop';
 
 const gamePath = process.argv.slice(-1)[0];
@@ -17,15 +17,89 @@ class ModInfo {
     version: string;
     loadPriority: string;
     requiredVersion: string;
+    isOnlineSafe: boolean;
 
-    constructor(name: string | null, author?: string | null, description?: string | null, version?: string | null, loadPriority?: number | null, requiredVersion?: number | null) {
+    constructor(name: string | null, isOnlineSafe: boolean, author?: string | null, description?: string | null,
+    version?: string | null, loadPriority?: number | null, requiredVersion?: number | null) {
         this.name = name || '';
+        this.isOnlineSafe = isOnlineSafe;
         this.author = author || 'Unknown.';
         this.description = description || 'Not specified.';
         this.version = version || 'Not specified.';
         this.loadPriority = loadPriority ? loadPriority.toString() : '0';
         this.requiredVersion = requiredVersion ? requiredVersion.toString() : 'Unknown.';
     }
+}
+
+const onlineSafeModNameKeywords: string[] = [
+    '/eternalmod/', '.tga', '.png', '.swf', '.bimage', '/advancedscreenviewshake/', '/audiolog/', '/audiologstory/', '/automap/', '/automapplayerprofile/',
+    '/automapproperties/', '/automapsoundprofile/', '/env/', '/font/', '/fontfx/', '/fx/', '/gameitem/', '/globalfonttable/', '/gorebehavior/',
+    '/gorecontainer/', '/gorewounds/', '/handsbobcycle/', '/highlightlos/', '/highlights/', '/hitconfirmationsoundsinfo/', '/hud/', '/hudelement/',
+    '/lightrig/', '/lodgroup/', '/material2/', '/md6def/', '/modelasset/', '/particle/', '/particlestage/', '/renderlayerdefinition/', '/renderparm/',
+    '/renderparmmeta/', '/renderprogflag/', '/ribbon2/', '/rumble/', '/soundevent/', '/soundpack/', '/soundrtpc/', '/soundstate/', '/soundswitch/',
+    '/speaker/', '/staticimage/', '/swfresources/', '/uianchor/', '/uicolor/', '/weaponreticle/', '/weaponreticleswfinfo/', '/entitydef/light/', '/entitydef/fx',
+    '/entitydef/', '/impacteffect/', '/uiweapon/', '/globalinitialwarehouse/', '/globalshell/', '/warehouseitem/', '/warehouseofflinecontainer/', '/tooltip/',
+    '/livetile/', '/tutorialevent/', '/maps/game/dlc/', '/maps/game/dlc2/', '/maps/game/hub/', '/maps/game/shell/', '/maps/game/sp/', '/maps/game/tutorials/',
+    '/decls/campaign'
+];
+
+const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'];
+
+// Check if mod is online safe
+function isOnlineSafe(modPath: string): boolean {
+    let isSafe = true;
+    let isModifyingUnsafeResource = false;
+    let assetsInfoJsons: IZipEntry[] = [];
+    let modZip = new admZip(modPath);
+
+    modZip.getEntries().forEach((modFile) => {
+        let modFileEntry = modFile.entryName;
+        let containerName = modFileEntry.split('/')[0];
+        let modName = modFileEntry.slice(containerName.length + 1);
+        let soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
+
+        // Allow sound files
+        if (fs.existsSync(soundContainerPath)) {
+            return;
+        }
+
+        // Save AssetsInfo JSON files to be handled later
+        if (modFileEntry.startsWith('EternalMod/assetsinfo/') && modFileEntry.endsWith('.json')) {
+            assetsInfoJsons.push(modFile);
+            return;
+        }
+
+        // Check if mod is modifying an online-unsafe resource
+        if (unsafeResourceNameKeywords.some((keyword) => containerName.startsWith(keyword))) {
+            isModifyingUnsafeResource = true;
+        }
+
+        // Allow modification of anything outside 'generated/decls/'
+        if (!modName.startsWith('generated/decls')) {
+            return;
+        }
+
+        isSafe = onlineSafeModNameKeywords.some((keyword) => modName.includes(keyword));
+    });
+
+    if (isSafe) {
+        return true;
+    }
+    else if (isModifyingUnsafeResource) {
+        return false;
+    }
+
+    // Don't allow injecting files into the online-unsafe resources
+    assetsInfoJsons.forEach((assetsInfoEntry) => {
+        let resourceName = assetsInfoEntry.entryName.split('/')[0];
+        let assetsInfo = JSON.parse(modZip.readAsText(assetsInfoEntry));
+
+        if (assetsInfo['resources'] !== null && unsafeResourceNameKeywords.some((keyword) => resourceName.startsWith(keyword))) {
+            return false;
+        }
+    });
+
+    return true;
 }
 
 // Get all zip files in given directory
@@ -54,25 +128,23 @@ function getZipsInDirectory(directory: string): string[] {
 // Load the given mod's info into the given fragment
 function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     let modFile = mod[0];
+    let modPath = path.join(mod[1] == 'mod' ? modsPath : disabledModsPath, modFile);
     let modInfo: ModInfo;
     
     try {
-        let zipPath = mod[1] == 'mod' ? modsPath : disabledModsPath;
-        let zip = new admZip(path.join(zipPath, modFile));
-        
-        let zipEntry = zip.getEntry('EternalMod.json');
+        let modZip = new admZip(modPath);
+        let eternalModJson = modZip.getEntry('EternalMod.json');
 
-        if (zipEntry) {
-            let json = JSON.parse(zip.readAsText(zipEntry));
-            modInfo = new ModInfo(json.name, json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
-            
+        if (eternalModJson) {
+            let json = JSON.parse(modZip.readAsText(eternalModJson));
+            modInfo = new ModInfo(json.name, isOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
         }
         else {
             throw new Error('Error');
         }
     }
     catch (err) {
-        modInfo = new ModInfo(modFile);
+        modInfo = new ModInfo(modFile, isOnlineSafe(modPath));
     }
 
     let checkbox = document.createElement('input');
