@@ -32,7 +32,7 @@ class ModInfo {
 }
 
 // Keywords for online safety check
-const onlineSafeModNameKeywords: string[] = [
+const onlineSafeModNameKeywords = [
     '/eternalmod/', '.tga', '.png', '.swf', '.bimage', '/advancedscreenviewshake/', '/audiolog/', '/audiologstory/', '/automap/', '/automapplayerprofile/',
     '/automapproperties/', '/automapsoundprofile/', '/env/', '/font/', '/fontfx/', '/fx/', '/gameitem/', '/globalfonttable/', '/gorebehavior/',
     '/gorecontainer/', '/gorewounds/', '/handsbobcycle/', '/highlightlos/', '/highlights/', '/hitconfirmationsoundsinfo/', '/hud/', '/hudelement/',
