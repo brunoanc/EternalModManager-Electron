@@ -73,7 +73,11 @@
         {
           "steam-files": {
             "interface": "personal-files",
-            "write": [ "$HOME/.var/app/com.valvesoftware.Steam", "$HOME/.local/share/Steam", "$HOME/.steam" ]
+            "write": [
+              "$HOME/.var/app/com.valvesoftware.Steam/steamapps/common/DOOMEternal",
+              "$HOME/.local/share/Steam/steamapps/common/DOOMEternal",
+              "$HOME/.steam/steam/steamapps/common/DOOMEternal"
+            ]
           }
         }
       ]
