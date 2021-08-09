@@ -54,7 +54,7 @@ function isOnlineSafe(modPath: string): boolean {
     let modZip = new admZip(modPath);
 
     modZip.getEntries().forEach((modFile) => {
-        let modFileEntry = modFile.entryName;
+        let modFileEntry = modFile.entryName.toLowerCase();
         let containerName = modFileEntry.split('/')[0];
         let modName = modFileEntry.slice(containerName.length + 1);
         let soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
@@ -80,7 +80,9 @@ function isOnlineSafe(modPath: string): boolean {
             return;
         }
 
-        isSafe = onlineSafeModNameKeywords.some((keyword) => modName.includes(keyword));
+        if (isSafe) {
+            isSafe = onlineSafeModNameKeywords.some((keyword) => modName.includes(keyword));
+        }
     });
 
     if (isSafe) {
