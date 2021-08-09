@@ -48,13 +48,13 @@ function getCurrentWindow(): BrowserWindow | null {
 
 // Create main window
 function createMainWindow(): void {
-    let winHeight = 720;
+    let winHeight = 735;
 
     if (process.platform == 'win32') {
-        winHeight = 775;
+        winHeight = 790;
     }
     else if (process.env['FLATPAK_ID']) {
-        winHeight = 746;
+        winHeight = 761;
     }
 
     mainWindow = new BrowserWindow({

@@ -12,12 +12,12 @@ const disabledModsPath = path.join(gamePath, 'DisabledMods');
 // Class containing mod info
 class ModInfo {
     name: string;
+    isOnlineSafe: boolean;
     author: string;
     description: string;
     version: string;
     loadPriority: string;
     requiredVersion: string;
-    isOnlineSafe: boolean;
 
     constructor(name: string | null, isOnlineSafe: boolean, author?: string | null, description?: string | null,
     version?: string | null, loadPriority?: number | null, requiredVersion?: number | null) {
@@ -191,6 +191,17 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         document.getElementById('mod-version')!.innerHTML = modInfo.version;
         document.getElementById('mod-min-version')!.innerHTML = modInfo.requiredVersion;
         document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
+        const modOnlineSafety = document.getElementById('mod-online-safety')!;
+        
+
+        if (modInfo.isOnlineSafe) {
+            modOnlineSafety.style.color = 'green';
+            modOnlineSafety.innerHTML = '<strong>This mod is safe for multiplayer.</strong>';
+        }
+        else {
+            modOnlineSafety.style.color = 'red';
+            modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer.</strong>';
+        }
     });
     
     // Append mod li to fragment
