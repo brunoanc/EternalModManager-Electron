@@ -72,6 +72,21 @@ body {
     margin: 0 5px 0 0;
 }
 
+.mod-button-name {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.mod-button-check {
+    flex: 1;
+    margin: 0;
+    padding: 0 5px 0 0;
+    text-align: right;
+}
+
 .middle-bottom {
     padding: 11px 12px 0 12px;
 }
@@ -86,6 +101,12 @@ body {
     overflow: hidden;
 }
 
+#mod-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 #mod-description {
     height: 62px;
     width: auto;
@@ -94,6 +115,7 @@ body {
 #mod-online-safety {
     margin: 0;
     padding: 0;
+    font-style: normal;
 }
 
 hr {
@@ -109,7 +131,7 @@ hr {
 .bottom button {
     height: 30px;
     width: 45%;
-    margin: 10px 20px 10px 20px;
+    margin: 13px 20px 10px 20px;
 }
 
 .bottom button:hover {

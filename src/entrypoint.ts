@@ -51,7 +51,7 @@ function createMainWindow(): void {
     let winHeight = 735;
 
     if (process.platform == 'win32') {
-        winHeight = 790;
+        winHeight = 795;
     }
     else if (process.env['FLATPAK_ID']) {
         winHeight = 761;

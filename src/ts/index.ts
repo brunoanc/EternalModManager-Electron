@@ -6,12 +6,14 @@ import admZip, { IZipEntry } from 'adm-zip';
 import dragDrop from 'drag-drop';
 
 const gamePath = process.argv.slice(-1)[0];
+const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 const modsPath = path.join(gamePath, 'Mods');
 const disabledModsPath = path.join(gamePath, 'DisabledMods');
 
 // Class containing mod info
 class ModInfo {
     name: string;
+    isValid: boolean;
     isOnlineSafe: boolean;
     author: string;
     description: string;
@@ -19,9 +21,10 @@ class ModInfo {
     loadPriority: string;
     requiredVersion: string;
 
-    constructor(name: string | null, isOnlineSafe: boolean, author?: string | null, description?: string | null,
-    version?: string | null, loadPriority?: number | null, requiredVersion?: number | null) {
+    constructor(name: string | null, isValid: boolean, isOnlineSafe: boolean, author?: string | null,
+    description?: string | null, version?: string | null, loadPriority?: number | null, requiredVersion?: number | null) {
         this.name = name || '';
+        this.isValid = isValid;
         this.isOnlineSafe = isOnlineSafe;
         this.author = author || 'Unknown.';
         this.description = description || 'Not specified.';
@@ -142,23 +145,28 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
 
         if (eternalModJson) {
             let json = JSON.parse(modZip.readAsText(eternalModJson));
-            modInfo = new ModInfo(json.name, isOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
+            modInfo = new ModInfo(json.name, true, isOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
         }
         else {
-            throw new Error('Error');
+            throw new Error('No EternalMod JSON found.');
         }
     }
     catch (err) {
-        modInfo = new ModInfo(modFile, isOnlineSafe(modPath));
+        if ((err as Error).message === 'Invalid or unsupported zip format. No END header found') {
+            modInfo = new ModInfo(modFile, false, false);
+        }
+        else {
+            modInfo = new ModInfo(modFile, true, isOnlineSafe(modPath));
+        }
     }
 
     // Create mod list element
-    let checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = mod[1];
-    checkbox.checked = mod[1] === 'mod';
+    let modCheckbox = document.createElement('input');
+    modCheckbox.type = 'checkbox';
+    modCheckbox.className = mod[1];
+    modCheckbox.checked = mod[1] === 'mod';
 
-    checkbox.addEventListener('change', (event: Event) => {
+    modCheckbox.addEventListener('change', (event: Event) => {
         let isChecked = true;
         let src = path.join(disabledModsPath, modFile);
         let dest = path.join(modsPath, modFile);
@@ -181,12 +189,50 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         }
     });
 
-    let button = document.createElement('button');
-    button.className = 'mod-button';
-    button.appendChild(checkbox);
-    button.appendChild(document.createTextNode(modFile));
+    // Create mod text
+    let modName = document.createElement('div');
+    modName.className = 'mod-button-name';
+    modName.innerHTML = modFile;
 
-    button.addEventListener('click', () => {
+    // Check if not online safe mods should be loaded
+    const onlyLoadOnlineSafeMods = fs.existsSync(settingsPath) && fs.readFileSync(settingsPath, 'utf8').includes(':ONLINE_SAFE=1');
+
+    // Create online safety check/warning icon
+    let onlineSafeCheck = document.createElement('div');
+    onlineSafeCheck.className = 'mod-button-check';
+
+    // Create the mod button
+    let modButton = document.createElement('button');
+    modButton.className = 'mod-button';
+    modButton.appendChild(modCheckbox);
+    modButton.appendChild(modName);
+    modButton.appendChild(onlineSafeCheck);
+
+    if (!modInfo.isValid) {
+        onlineSafeCheck.style.color = 'red';
+        onlineSafeCheck.innerHTML = '<strong>✗</strong>';
+        onlineSafeCheck.title = 'Invalid .zip file.';
+        modName.style.color = 'red';
+    }
+    else if (modInfo.isOnlineSafe) {
+        onlineSafeCheck.style.color = 'green';
+        onlineSafeCheck.innerHTML = '<strong>✓</strong>';
+        onlineSafeCheck.title = 'This mod is safe for multiplayer.';
+    }
+    else if (onlyLoadOnlineSafeMods) {
+        onlineSafeCheck.style.color = 'red';
+        onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
+        onlineSafeCheck.title = 'This mod is not safe for multiplayer. It will not be loaded.';
+        modName.style.color = 'gray';
+        modCheckbox.disabled = true;
+    }
+    else {
+        onlineSafeCheck.style.color = 'orange';
+        onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
+        onlineSafeCheck.title = 'This mod is not safe for multiplayer. Multiplayer will be disabled if this mod is enabled.';
+    }
+
+    modButton.addEventListener('click', () => {
         document.getElementById('mod-name')!.innerHTML = modInfo.name;
         document.getElementById('mod-author')!.innerHTML = modInfo.author;
         document.getElementById('mod-description')!.innerHTML = modInfo.description;
@@ -195,21 +241,36 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
         const modOnlineSafety = document.getElementById('mod-online-safety')!;
         
-
-        if (modInfo.isOnlineSafe) {
+        if (!modInfo.isValid) {
+            modOnlineSafety.style.color = 'red';
+            modOnlineSafety.innerHTML = '<strong>Invalid .zip file.</strong>';
+        }
+        else if (modInfo.isOnlineSafe) {
             modOnlineSafety.style.color = 'green';
             modOnlineSafety.innerHTML = '<strong>This mod is safe for multiplayer.</strong>';
         }
         else {
-            modOnlineSafety.style.color = 'red';
-            modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer.</strong>';
+            if (onlyLoadOnlineSafeMods) {
+                modOnlineSafety.style.color = 'red';
+                modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. It will not be loaded.</strong>';
+            }
+            else {
+                modOnlineSafety.style.color = 'orange';
+
+                if (modCheckbox.checked) {
+                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Multiplayer will be disabled.</strong>';
+                }
+                else {
+                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer.</strong>';
+                }
+            }
         }
     });
     
     // Append mod li to fragment
-    let modLI = document.createElement('li');
-    modLI.appendChild(button);
-    fragment.appendChild(modLI);
+    let modLi = document.createElement('li');
+    modLi.appendChild(modButton);
+    fragment.appendChild(modLi);
 }
 
 // Get all mods in given directory and add them to the mod list
@@ -272,7 +333,11 @@ function initWatcher(): void {
     });
     
     watcher.on('all', (event, filePath) => {
-        if ((!filePath.startsWith(modsPath) && !filePath.startsWith(disabledModsPath)) || !watcherReady) {
+        if (!watcherReady) {
+            return;
+        }
+
+        if (!filePath.startsWith(modsPath) && !filePath.startsWith(disabledModsPath) && !filePath.startsWith(settingsPath)) {
             return;
         }
         
