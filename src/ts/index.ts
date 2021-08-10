@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { ipcRenderer } from 'electron';
-import fileWatcher from 'chokidar';
+import fileWatcher, { FSWatcher } from 'chokidar';
 import admZip, { IZipEntry } from 'adm-zip';
 import dragDrop from 'drag-drop';
 
@@ -9,6 +9,7 @@ const gamePath = process.argv.slice(-1)[0];
 const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 const modsPath = path.join(gamePath, 'Mods');
 const disabledModsPath = path.join(gamePath, 'DisabledMods');
+let watcher: FSWatcher;
 
 // Class containing mod info
 class ModInfo {
@@ -220,14 +221,14 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         onlineSafeCheck.title = 'This mod is safe for multiplayer.';
     }
     else if (onlyLoadOnlineSafeMods) {
-        onlineSafeCheck.style.color = 'red';
+        onlineSafeCheck.style.color = 'orange';
         onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
         onlineSafeCheck.title = 'This mod is not safe for multiplayer. It will not be loaded.';
         modName.style.color = 'gray';
         modCheckbox.disabled = true;
     }
     else {
-        onlineSafeCheck.style.color = 'orange';
+        onlineSafeCheck.style.color = 'red';
         onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
         onlineSafeCheck.title = 'This mod is not safe for multiplayer. Multiplayer will be disabled if this mod is enabled.';
     }
@@ -251,11 +252,11 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         }
         else {
             if (onlyLoadOnlineSafeMods) {
-                modOnlineSafety.style.color = 'red';
+                modOnlineSafety.style.color = 'orange';
                 modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. It will not be loaded.</strong>';
             }
             else {
-                modOnlineSafety.style.color = 'orange';
+                modOnlineSafety.style.color = 'red';
 
                 if (modCheckbox.checked) {
                     modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Multiplayer will be disabled.</strong>';
@@ -318,7 +319,7 @@ function initWatcher(): void {
     makeModDirectories();
 
     // Watch the game directory
-    let watcher = fileWatcher.watch(path.join(modsPath, '..'), {
+    watcher = fileWatcher.watch(path.join(modsPath, '..'), {
         ignored: /[\/\\]\./,
         persistent: true,
         depth: 1
@@ -356,6 +357,8 @@ function initCheckList(): void {
 
     // Make checkbox enable/disable the rest of the checkboxes
     topCheckbox.addEventListener('change', (event) => {
+        watcher.unwatch(path.join(modsPath, '..'));
+
         if ((event.currentTarget! as HTMLInputElement).checked) {
             while (disabledMods.length > 0) {
                 (disabledMods[0] as HTMLInputElement).checked = true;
@@ -370,6 +373,8 @@ function initCheckList(): void {
                 mods[0].className = 'disabled-mod';
             }
         }
+
+        initWatcher();
     });
 }
 
