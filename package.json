@@ -1,6 +1,6 @@
 {
   "name": "eternalmodmanager",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "homepage": "https://github.com/PowerBall253/EternalModManager",
   "description": "Cross platform mod manager for DOOM Eternal.",
   "main": "build/entrypoint.js",
@@ -50,10 +50,10 @@
     },
     "win": {
       "target": "portable",
-      "icon": "resources/com.powerball253.eternalmodmanager.png"
+      "icon": "resources/eternalmodmanager.png"
     },
     "linux": {
-      "icon": "resources/com.powerball253.eternalmodmanager.png",
+      "icon": "resources/eternalmodmanager.png",
       "category": "Utility",
       "target": [
         "AppImage",
