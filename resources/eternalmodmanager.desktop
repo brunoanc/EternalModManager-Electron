@@ -3,5 +3,5 @@ Name=EternalModManager
 Comment=Cross platform mod manager for DOOM Eternal.
 Exec=eternalmodmanager
 Type=Application
-Icon=com.powerball253.eternalmodmanager
+Icon=eternalmodmanager
 Categories=Utility
