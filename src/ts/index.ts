@@ -136,7 +136,7 @@ function getZipsInDirectory(directory: string): string[] {
 // Load the given mod's info into the given fragment
 function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     let modFile = mod[0];
-    let modPath = path.join(mod[1] == 'mod' ? modsPath : disabledModsPath, modFile);
+    let modPath = path.join(mod[1] === 'mod' ? modsPath : disabledModsPath, modFile);
     let modInfo: ModInfo;
     
     // Read mod info from EternalMod.json

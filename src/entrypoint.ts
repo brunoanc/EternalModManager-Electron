@@ -50,7 +50,7 @@ function getCurrentWindow(): BrowserWindow | null {
 function createMainWindow(): void {
     let winHeight = 735;
 
-    if (process.platform == 'win32') {
+    if (process.platform === 'win32') {
         winHeight = 795;
     }
     else if (process.env['FLATPAK_ID']) {
@@ -83,7 +83,7 @@ function createMainWindow(): void {
 function createAdvancedWindow(): void {
     let winHeight = 326;
 
-    if (process.platform == 'win32') {
+    if (process.platform === 'win32') {
         winHeight = 355;
     }
     else if (process.env['FLATPAK_ID']) {
@@ -123,7 +123,7 @@ function createAdvancedWindow(): void {
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
     let winHeight = 150;
 
-    if (process.platform == 'win32') {
+    if (process.platform === 'win32') {
         winHeight = 180;
     }
     else if (process.env['FLATPAK_ID']) {
@@ -332,7 +332,7 @@ ipcMain.on('launch-script', () => {
     let winWidth = 1000;
     let winHeight = 500;
 
-    if (process.platform == 'win32') {
+    if (process.platform === 'win32') {
         winWidth = 1005;
         winHeight = 530;
     }
