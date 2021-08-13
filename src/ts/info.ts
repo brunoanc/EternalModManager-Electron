@@ -141,8 +141,8 @@ ipcRenderer.on('reset-info', () => {
         'Are you sure you want to continue?';
     
     // Setup 'Yes' button
-    const button = document.getElementById('ok-button');
-    button!.innerHTML = 'No';
+    const button = document.getElementById('ok-button')!;
+    button.innerHTML = 'No';
 
     const yesButton = document.createElement('button');
     yesButton.innerHTML = 'Yes';

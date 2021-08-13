@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import { spawn, spawnSync, ChildProcessWithoutNullStreams } from 'child_process'
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 
@@ -413,18 +414,22 @@ ipcMain.on('close-restore-window', () => {
         backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
     }
 
+    const currentWindow = getCurrentWindow()!;
+    let backupsRestored = 0;
+
     // Restore backups
     backups.forEach((backup) => {
-        try {
-            fs.copyFileSync(backup, backup.slice(0, -7));
-        }
-        catch (err) {
+        fsPromises.copyFile(backup, backup.slice(0, -7)).catch(() => {
             createInfoWindow('restore-error');
-        }
-    });
+        }).finally(() => {
+            backupsRestored++;
 
-    getCurrentWindow()!.close();
-    createInfoWindow('restore-success-info');
+            if (backupsRestored === backups.length) {
+                currentWindow.close();
+                createInfoWindow('restore-success-info');
+            }
+        });
+    });
 });
 
 // Launch info window before deleting backups
@@ -448,33 +453,37 @@ ipcMain.on('close-reset-window', () => {
         backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
     }
 
+    const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
+    const newLine = process.platform === 'win32' ? '\r\n' : '\n';
+    const currentWindow = getCurrentWindow()!;
+    let deletedBackups = 0;
+
     // Delete backups
     backups.forEach((backup) => {
-        try {
-            fs.unlinkSync(backup);
-        }
-        catch (err) {
+        fsPromises.unlink(backup).catch(() => {
             createInfoWindow('reset-error');
-        }
-    });
+        }).finally(() => {
+            deletedBackups++;
 
-    const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
+            // Remove backup file entries from injector settings file
+            if (deletedBackups === backups.length) {
+                if (fs.existsSync(settingsPath)) {
+                    let settings: string[] = [];
 
-    if (fs.existsSync(settingsPath)) {
-        // Remove backup file entries from injector settings file
-        let settings = '';
+                    fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean).forEach((line) => {
+                        if (line.startsWith(':')) {
+                            settings.push(line);
+                        }
+                    });
+            
+                    fs.writeFileSync(settingsPath, settings.join(newLine));
+                }
 
-        fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean).forEach((line) => {
-            if (line.startsWith(':')) {
-                settings = settings + line + '\n';
+                currentWindow.close();
+                createInfoWindow('reset-success-info');
             }
         });
-
-        fs.writeFileSync(settingsPath, settings);
-    }
-
-    getCurrentWindow()!.close();
-    createInfoWindow('reset-success-info');
+    });
 });
 
 // Launch info window after saving settings file

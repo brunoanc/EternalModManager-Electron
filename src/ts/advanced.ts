@@ -55,9 +55,8 @@ document.getElementById('copy-json')!.addEventListener('click', () => {
 // Add functionality to mod injector settings integration
 const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 const newLine = process.platform === 'win32' ? '\r\n' : '\n';
-
 const settingsMap: { [key: string]: string } = {};
-const settingsValuesMap: { [key: string]: string } = {
+let settingsValuesMap: { [key: string]: string } = {
     AUTO_LAUNCH_GAME: 'auto-launch-checkbox',
     RESET_BACKUPS: 'reset-backups-checkbox',
     SLOW: 'slowmode-checkbox',
@@ -68,6 +67,7 @@ const settingsValuesMap: { [key: string]: string } = {
     GAME_PARAMETERS: 'args-input'
 };
 
+// Enable auto update editing on Linux
 if (process.platform === 'win32' || !fs.existsSync(settingsPath)) {
     (document.getElementById('autoupdate-checkbox')! as HTMLInputElement).disabled = true;
     document.getElementById('autoupdate-label')!.style.color = 'gray';
@@ -76,6 +76,7 @@ else {
     settingsValuesMap['AUTO_UPDATE'] = 'autoupdate-checkbox';
 }
 
+// Disable settings modification if the file doesn't exist
 if (!fs.existsSync(settingsPath)) {
     (document.getElementsByClassName('injector-header')[0] as HTMLElement).style.color = 'gray';
     document.getElementById('args-text')!.style.color = 'gray';
@@ -94,6 +95,7 @@ if (!fs.existsSync(settingsPath)) {
     throw new Error('Settings not found, stop script execution');
 }
 
+// Read settings file
 fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line: string) => {
     const splitLine = line.split('=');
 
@@ -106,19 +108,23 @@ fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((l
     }
 });
 
+// Check the needed settings checkboxes
 Object.keys(settingsValuesMap).forEach((setting) => {
     if (setting === 'GAME_PARAMETERS') {
         (document.getElementById('args-input')! as HTMLInputElement).value = settingsMap[':GAME_PARAMETERS'] || '';
     }
     else {
-        (document.getElementById(settingsValuesMap[setting])! as HTMLInputElement).checked = settingsMap[':' + setting] === '1';
+
+        (document.getElementById(settingsValuesMap[setting])! as HTMLInputElement).checked = settingsMap[`:${setting}`] === '1';
     }
 });
 
+// Save settings when the button is pressed
 document.getElementById('save-button')!.addEventListener('click', () => {
-    let settingsFile = '';
-    let extraSettings = newLine;
+    let settingsFile: string[] = [];
+    let extraSettings: string[] = [newLine];
 
+    // Replace already existing settings
     fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line: string) => {
         if (line === newLine) {
             return;
@@ -136,31 +142,45 @@ document.getElementById('save-button')!.addEventListener('click', () => {
                 settingsValue = (document.getElementById(settingsValuesMap[settingsKey])! as HTMLInputElement).checked ? '1' : '0';
             }
     
-            settingsFile = settingsFile + ':' + settingsKey + '=' + settingsValue + newLine;
+            settingsFile.push(`:${settingsKey}=${settingsValue}`);
             delete settingsValuesMap[settingsKey];
         }
         else if (line.startsWith(':')) {
-            settingsFile = settingsFile + line + newLine;
+            settingsFile.push(line);
         }
         else {
-            extraSettings = extraSettings + line + newLine;
+            extraSettings.push(line);
         }
     });
 
+    // Add unexisting settings
     Object.keys(settingsValuesMap).forEach((setting) => {
         if (setting === 'GAME_PARAMETERS') {
-            settingsFile = settingsFile + ':GAME_PARAMETERS=' + (document.getElementById('args-input')! as HTMLInputElement).value.trim() + newLine;
+            settingsFile.push(`:GAME_PARAMETERS=${(document.getElementById('args-input')! as HTMLInputElement).value.trim()}`);
             return;
         }
 
         if ((document.getElementById(settingsValuesMap[setting])! as HTMLInputElement).checked) {
-            settingsFile = settingsFile + ':' + setting + '=1' + newLine;
+            settingsFile.push(`:${setting}=1`);
         }
     });
 
-    settingsFile += extraSettings;
-    fs.writeFileSync(settingsPath, settingsFile);
+    // Write settings file
+    fs.writeFileSync(settingsPath, settingsFile.concat(extraSettings).join(newLine));
 
+    // Re-populate settings values map
+    settingsValuesMap = {
+        AUTO_LAUNCH_GAME: 'auto-launch-checkbox',
+        RESET_BACKUPS: 'reset-backups-checkbox',
+        SLOW: 'slowmode-checkbox',
+        COMPRESS_TEXTURES: 'texture-compression-checkbox',
+        VERBOSE: 'verbose-checkbox',
+        DISABLE_MULTITHREADING: 'multithreading-checkbox',
+        ONLINE_SAFE: 'online-checkbox',
+        GAME_PARAMETERS: 'args-input'
+    };
+
+    // Launch success window
     document.body.style.opacity = '0.5';
     ipcRenderer.send('settings-saved-window');
 
