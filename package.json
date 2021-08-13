@@ -49,9 +49,11 @@
       "buildResources": "resources"
     },
     "win": {
-      "target": "portable"
+      "target": "portable",
+      "icon": "resources/com.powerball253.eternalmodmanager.png"
     },
     "linux": {
+      "icon": "resources/com.powerball253.eternalmodmanager.png",
       "category": "Utility",
       "target": [
         "AppImage",
