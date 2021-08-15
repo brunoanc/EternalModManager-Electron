@@ -57,7 +57,7 @@ function isOnlineSafe(modPath: string): boolean {
     let assetsInfoJsons: IZipEntry[] = [];
     let modZip = new admZip(modPath);
 
-    modZip.getEntries().forEach((modFile) => {
+    for (const modFile of modZip.getEntries()) {
         let modFileEntry = modFile.entryName.toLowerCase();
         let containerName = modFileEntry.split('/')[0];
         let modName = modFileEntry.slice(containerName.length + 1);
@@ -65,13 +65,13 @@ function isOnlineSafe(modPath: string): boolean {
 
         // Allow sound files
         if (fs.existsSync(soundContainerPath)) {
-            return;
+            continue;
         }
 
         // Save AssetsInfo JSON files to be handled later
         if (modFileEntry.startsWith('EternalMod/assetsinfo/') && modFileEntry.endsWith('.json')) {
             assetsInfoJsons.push(modFile);
-            return;
+            continue;
         }
 
         // Check if mod is modifying an online-unsafe resource
@@ -81,13 +81,13 @@ function isOnlineSafe(modPath: string): boolean {
 
         // Allow modification of anything outside 'generated/decls/'
         if (!modName.startsWith('generated/decls')) {
-            return;
+            continue;
         }
 
         if (isSafe) {
             isSafe = onlineSafeModNameKeywords.some((keyword) => modName.includes(keyword));
         }
-    });
+    }
 
     if (isSafe) {
         return true;
@@ -97,14 +97,14 @@ function isOnlineSafe(modPath: string): boolean {
     }
 
     // Don't allow injecting files into the online-unsafe resources
-    assetsInfoJsons.forEach((assetsInfoEntry) => {
+    for (const assetsInfoEntry of assetsInfoJsons) {
         let resourceName = assetsInfoEntry.entryName.split('/')[0];
         let assetsInfo = JSON.parse(modZip.readAsText(assetsInfoEntry));
 
         if (assetsInfo['resources'] !== null && unsafeResourceNameKeywords.some((keyword) => resourceName.startsWith(keyword))) {
             return false;
         }
-    });
+    }
 
     return true;
 }
@@ -121,14 +121,14 @@ function getZipsInDirectory(directory: string): string[] {
     catch (err) {
         return zips;
     }
-  
-    dirContent.forEach((filePath) => {
+
+    for (const filePath of dirContent) {
         const fullPath = path.join(directory, filePath);
 
         if (fs.statSync(fullPath).isFile() && filePath.endsWith('.zip')) {
             zips.push(filePath);
         }
-    });
+    }
   
     return zips;
 }
@@ -279,21 +279,21 @@ function getMods(): void {
     const fragment = document.createDocumentFragment();
     const mods: string[][] = [];
 
-    getZipsInDirectory(modsPath).forEach((modFile) => {
+    for (const modFile of getZipsInDirectory(modsPath)) {
         mods.push([modFile, 'mod']);
-    });
+    }
 
-    getZipsInDirectory(disabledModsPath).forEach((modFile) => {
+    for (const modFile of getZipsInDirectory(disabledModsPath)) {
         mods.push([modFile, 'disabled-mod']);
-    });
+    }
 
     mods.sort((a, b) => {
         return a[0].toLowerCase().localeCompare(b[0].toLowerCase());
     });
 
-    mods.forEach((mod) => {
+    for (const mod of mods) {
         loadModIntoFragment(fragment, mod);
-    });
+    }
 
     const modsList = document.getElementById('mods-list')!;
 
@@ -381,15 +381,15 @@ function initCheckList(): void {
 // Add mod drag-n-drop functionality
 function initDragAndDrop(): void {
     dragDrop('body', (files: File[]) => {
-        files.forEach((file) => {
+        for (const file of files) {
             if (!fs.lstatSync(file.path).isFile) {
-                return;
+                continue;
             }
 
             fs.copyFile(file.path, path.join(modsPath, path.basename(file.path)), () => {
                 // No need for error handling, the watcher will take care of it
             });
-        });
+        }
     });
 }
 

@@ -83,33 +83,33 @@ if (!fs.existsSync(settingsPath)) {
     (document.getElementById('args-input')! as HTMLInputElement).disabled = true;
     (document.getElementById('save-button')! as HTMLInputElement).disabled = true;
 
-    Object.values(settingsValuesMap).forEach((checkbox) => {
+    for (const checkbox of Object.values(settingsValuesMap)) {
         if (checkbox === 'args-input') {
-            return;
+            continue;
         }
 
         (document.getElementById(checkbox)! as HTMLInputElement).disabled = true;
         document.getElementById(checkbox.slice(0, -8) + 'label')!.style.color = 'gray';
-    });
+    }
 
     throw new Error('Settings not found, stop script execution');
 }
 
 // Read settings file
-fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line: string) => {
+for (const line of fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean)) {
     const splitLine = line.split('=');
 
     if (splitLine.length !== 2) {
-        return;
+        continue;
     }
 
     if (settingsValuesMap.hasOwnProperty(splitLine[0].slice(1))) {
         settingsMap[splitLine[0]] = splitLine[1].trim();
     }
-});
+}
 
 // Check the needed settings checkboxes
-Object.keys(settingsValuesMap).forEach((setting) => {
+for (const setting of Object.keys(settingsValuesMap)) {
     if (setting === 'GAME_PARAMETERS') {
         (document.getElementById('args-input')! as HTMLInputElement).value = settingsMap[':GAME_PARAMETERS'] || '';
     }
@@ -117,7 +117,7 @@ Object.keys(settingsValuesMap).forEach((setting) => {
 
         (document.getElementById(settingsValuesMap[setting])! as HTMLInputElement).checked = settingsMap[`:${setting}`] === '1';
     }
-});
+}
 
 // Save settings when the button is pressed
 document.getElementById('save-button')!.addEventListener('click', () => {
@@ -125,9 +125,9 @@ document.getElementById('save-button')!.addEventListener('click', () => {
     let extraSettings: string[] = [newLine];
 
     // Replace already existing settings
-    fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean).forEach((line: string) => {
+    for (const line of fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean)) {
         if (line === newLine) {
-            return;
+            continue;
         }
 
         let splitLine = line.split('=');
@@ -151,19 +151,19 @@ document.getElementById('save-button')!.addEventListener('click', () => {
         else {
             extraSettings.push(line);
         }
-    });
+    }
 
     // Add unexisting settings
-    Object.keys(settingsValuesMap).forEach((setting) => {
+    for (const setting of Object.keys(settingsValuesMap)) {
         if (setting === 'GAME_PARAMETERS') {
             settingsFile.push(`:GAME_PARAMETERS=${(document.getElementById('args-input')! as HTMLInputElement).value.trim()}`);
-            return;
+            continue;
         }
 
         if ((document.getElementById(settingsValuesMap[setting])! as HTMLInputElement).checked) {
             settingsFile.push(`:${setting}=1`);
         }
-    });
+    }
 
     // Write settings file
     fs.writeFileSync(settingsPath, settingsFile.concat(extraSettings).join(newLine));

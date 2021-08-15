@@ -194,15 +194,15 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
     backups = backups || [];
 
     const files = fs.readdirSync(dirPath);
-  
-    files.forEach((file) => {
+
+    for (const file of files) {
         if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
             backups = getBackups(path.join(dirPath, file), backups);
         }
         else if (file.endsWith('.resources.backup') || file.endsWith('.snd.backup')) {
             backups!.push(path.join(dirPath, file));
         }
-    })
+    }
   
     return backups;
 }
@@ -263,6 +263,31 @@ function launchScript(win: BrowserWindow): void {
 
         win.getParentWindow().webContents.send('restore-parent');
     });
+}
+
+async function handleBackups(restore: boolean): Promise<void> {
+    const backups = getBackups(path.join(gamePath, 'base'));
+
+    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
+        backups.push(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'));
+    }
+
+    if (fs.existsSync(path.join(gamePath, 'base', 'packagemapspec.json.backup'))) {
+        backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
+    }
+
+    for (const backup of backups) {
+        if (restore) {
+            await fsPromises.copyFile(backup, backup.slice(0, -7)).catch(() => {
+                createInfoWindow('restore-error');
+            });
+        }
+        else {
+            await fsPromises.unlink(backup).catch(() => {
+                createInfoWindow('reset-error');
+            });
+        }
+    }
 }
 
 // Load main window on app startup
@@ -401,34 +426,13 @@ ipcMain.on('restore-window', () => {
 // Restore backups
 ipcMain.on('close-restore-window', () => {
     errorType = 'restoring-info';
-    getCurrentWindow()!.webContents.send(errorType);
-
-    // Get backup files
-    const backups = getBackups(path.join(gamePath, 'base'));
-
-    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
-        backups.push(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'));
-    }
-
-    if (fs.existsSync(path.join(gamePath, 'base', 'packagemapspec.json.backup'))) {
-        backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
-    }
-
     const currentWindow = getCurrentWindow()!;
-    let backupsRestored = 0;
+    currentWindow.webContents.send(errorType);
 
     // Restore backups
-    backups.forEach((backup) => {
-        fsPromises.copyFile(backup, backup.slice(0, -7)).catch(() => {
-            createInfoWindow('restore-error');
-        }).finally(() => {
-            backupsRestored++;
-
-            if (backupsRestored === backups.length) {
-                currentWindow.close();
-                createInfoWindow('restore-success-info');
-            }
-        });
+    handleBackups(true).then(() => {
+        currentWindow.close();
+        createInfoWindow('restore-success-info');
     });
 });
 
@@ -440,49 +444,29 @@ ipcMain.on('reset-window', () => {
 // Delete backups
 ipcMain.on('close-reset-window', () => {
     errorType = 'resetting-info';
-    getCurrentWindow()!.webContents.send(errorType);
-
-    // Get backup files
-    const backups = getBackups(path.join(gamePath, 'base'));
-
-    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
-        backups.push(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'));
-    }
-
-    if (fs.existsSync(path.join(gamePath, 'base', 'packagemapspec.json.backup'))) {
-        backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
-    }
-
-    const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
-    const newLine = process.platform === 'win32' ? '\r\n' : '\n';
     const currentWindow = getCurrentWindow()!;
-    let deletedBackups = 0;
+    currentWindow.webContents.send(errorType);
 
     // Delete backups
-    backups.forEach((backup) => {
-        fsPromises.unlink(backup).catch(() => {
-            createInfoWindow('reset-error');
-        }).finally(() => {
-            deletedBackups++;
+    handleBackups(false).then(() => {
+        const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
+        const newLine = process.platform === 'win32' ? '\r\n' : '\n';
 
-            // Remove backup file entries from injector settings file
-            if (deletedBackups === backups.length) {
-                if (fs.existsSync(settingsPath)) {
-                    let settings: string[] = [];
+        // Delete backup entries from config file
+        if (fs.existsSync(settingsPath)) {
+            let settings: string[] = [];
 
-                    fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean).forEach((line) => {
-                        if (line.startsWith(':')) {
-                            settings.push(line);
-                        }
-                    });
-            
-                    fs.writeFileSync(settingsPath, settings.join(newLine));
+            for (const line of fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean)) {
+                if (line.startsWith(':')) {
+                    settings.push(line);
                 }
-
-                currentWindow.close();
-                createInfoWindow('reset-success-info');
             }
-        });
+    
+            fs.writeFileSync(settingsPath, settings.join(newLine));
+        }
+
+        currentWindow.close();
+        createInfoWindow('reset-success-info');
     });
 });
 
