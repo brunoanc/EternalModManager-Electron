@@ -384,8 +384,6 @@ ipcMain.on('launch-script', () => {
         }
     });
 
-    let injectorProcess: ChildProcessWithoutNullStreams;
-
     win.on('ready-to-show', () => {
         // Launch script
         win.show();
