@@ -63,6 +63,11 @@ function isOnlineSafe(modPath: string): boolean {
         let modName = modFileEntry.slice(containerName.length + 1);
         let soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
 
+        // Allow hidden system files that may end up in mods accidentally
+        if (modFileEntry.endsWith('desktop.ini' || modFileEntry.endsWith('.ds_store'))) {
+            continue;
+        }
+
         // Allow sound files
         if (fs.existsSync(soundContainerPath)) {
             continue;
