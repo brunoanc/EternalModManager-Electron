@@ -14,6 +14,17 @@ and reboot your system. The app should now be available in your DE's menu, or yo
 flatpak run com.powerball253.eternalmodmanager
 ```
 
+### Snap (Linux only)
+The app is currently available in the [Snap Store](https://snapcraft.io/eternalmodmanager). To install it, make sure you have `snap` installed, then run
+```
+snap install eternalmodmanager
+```
+and reboot your system. The app should now be available in your DE's menu, or you can run it in your terminal with the following commands:
+```
+eternalmodmanager
+snap run eternalmodmanager
+```
+
 ### AUR (Arch Linux only)
 The app is currently available in the [AUR](https://aur.archlinux.org/packages/eternalmodmanager/). You can use your favorite AUR helper to install it, or download and build manually as described in the [Arch wiki](https://aur.archlinux.org/packages/eternalmodmanager/).
 
