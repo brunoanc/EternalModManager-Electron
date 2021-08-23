@@ -4,4 +4,4 @@ Comment=Cross platform mod manager for DOOM Eternal.
 Exec=eternalmodmanager
 Type=Application
 Icon=eternalmodmanager
-Categories=Utility
+Categories=Utility;
