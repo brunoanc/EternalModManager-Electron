@@ -278,14 +278,20 @@ async function handleBackups(restore: boolean): Promise<void> {
 
     for (const backup of backups) {
         if (restore) {
-            await fsPromises.copyFile(backup, backup.slice(0, -7)).catch(() => {
+            try {
+                fs.copyFileSync(backup, backup.slice(0, -7));
+            }
+            catch {
                 createInfoWindow('restore-error');
-            });
+            }
         }
         else {
-            await fsPromises.unlink(backup).catch(() => {
+            try {
+                fs.unlinkSync(backup);
+            }
+            catch {
                 createInfoWindow('reset-error');
-            });
+            }
         }
     }
 }
