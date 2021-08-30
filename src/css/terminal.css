@@ -1,3 +1,8 @@
+body {
+    font-family: 'Segoe UI', ui-sans-serif, monospace;
+    background-color: white;
+}
+
 #terminal {
     height: 484px;
     width: 982px;

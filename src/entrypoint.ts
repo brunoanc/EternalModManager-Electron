@@ -27,6 +27,18 @@ let injectorPath = ''
 let errorType = '';
 let mainWindow: BrowserWindow;
 
+// Replicate modal window functionality
+// Needed to work around macOS removing title bar in modal windows
+function disableWindow(window: BrowserWindow): void {
+    window.webContents.executeJavaScript('document.body.style.pointerEvents = \'none\';');
+    window.setFocusable(false);
+}
+
+function reEnableWindow(window: BrowserWindow): void {
+    window.webContents.executeJavaScript('document.body.style.pointerEvents = \'auto\';');
+    window.setFocusable(true);
+}
+
 // Get current window
 function getCurrentWindow(): BrowserWindow | null {
     let win = mainWindow;
@@ -52,6 +64,9 @@ function createMainWindow(): void {
 
     if (process.platform === 'win32') {
         winHeight = 795;
+    }
+    else if (process.platform === 'darwin') {
+        winHeight = 780;
     }
     else if (process.env['FLATPAK_ID']) {
         winHeight = 761;
@@ -86,13 +101,15 @@ function createAdvancedWindow(): void {
     if (process.platform === 'win32') {
         winHeight = 355;
     }
+    else if (process.platform === 'darwin') {
+        winHeight = 355;
+    }
     else if (process.env['FLATPAK_ID']) {
         winHeight = 352;
     }
 
     const win = new BrowserWindow({
         parent: mainWindow,
-        modal: true,
         width: 600,
         height: winHeight,
         minimizable: false,
@@ -108,11 +125,13 @@ function createAdvancedWindow(): void {
     });
 
     win.on('ready-to-show', () => {
+        disableWindow(mainWindow);
         win.show();
     });
 
     win.on('closed', () => {
         mainWindow.webContents.send('restore-parent');
+        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -126,13 +145,15 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
     if (process.platform === 'win32') {
         winHeight = 180;
     }
+    else if (process.platform === 'darwin') {
+        winHeight = 180;
+    }
     else if (process.env['FLATPAK_ID']) {
         winHeight = 176;
     }
 
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
-        modal: true,
         width: 360,
         height: winHeight,
         minimizable: false,
@@ -174,13 +195,16 @@ function loadMainWindow(): void {
 // Create info window and set attributes
 function createInfoWindow(send: string): void {
     const win = newInfoWindow();
+    const parentWindow = win.getParentWindow();
 
     win.on('ready-to-show', () => {
+        disableWindow(parentWindow);
         win.show();
     });
 
     win.on('close', () => {
         win.getParentWindow().webContents.send('restore-parent');
+        reEnableWindow(parentWindow);
     });
 
     win.setMenu(null);
@@ -371,14 +395,16 @@ ipcMain.on('launch-script', () => {
         winWidth = 1005;
         winHeight = 530;
     }
+    else if (process.platform === 'darwin') {
+        winHeight = 530;
+    }
     else if (process.env['FLATPAK_ID']) {
         winHeight = 526;
     }
 
     // Create terminal window
     const win = new BrowserWindow({
-        parent: getCurrentWindow() || undefined,
-        modal: true,
+        parent: mainWindow,
         width: winWidth,
         height: winHeight,
         minimizable: false,
@@ -395,8 +421,13 @@ ipcMain.on('launch-script', () => {
 
     win.on('ready-to-show', () => {
         // Launch script
+        disableWindow(mainWindow);
         win.show();
         launchScript(win);
+    });
+
+    win.on('close', () => {
+        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -410,8 +441,14 @@ ipcMain.on('advanced-window', createAdvancedWindow);
 ipcMain.on('settings-info-window', () => {
     const win = newInfoWindow();
 
+
     win.on('ready-to-show', () => {
+        disableWindow(mainWindow);
         win.show();
+    });
+
+    mainWindow.on('close', () => {
+        reEnableWindow(mainWindow);
     });
 
     win.on('closed', createAdvancedWindow);
