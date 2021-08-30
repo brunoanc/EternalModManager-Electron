@@ -60,13 +60,18 @@ function getCurrentWindow(): BrowserWindow | null {
 
 // Create main window
 function createMainWindow(): void {
-    let winHeight = 761;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winHeight = 795;
-    }
-    else if (process.platform === 'darwin') {
-        winHeight = 780;
+    switch (process.platform) {
+        case 'win32':
+            winHeight = 795;
+            break;
+        case 'darwin':
+            winHeight = 780;
+            break;
+        case 'linux':
+            winHeight = 761;
+            break;
     }
 
     mainWindow = new BrowserWindow({
@@ -93,13 +98,16 @@ function createMainWindow(): void {
 
 // Create 'Advanced Info' window
 function createAdvancedWindow(): void {
-    let winHeight = 352;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winHeight = 355;
-    }
-    else if (process.platform === 'darwin') {
-        winHeight = 355;
+    switch (process.platform) {
+        case 'win32':
+        case 'darwin':
+            winHeight = 355;
+            break;
+        case 'linux':
+            winHeight = 352;
+            break;
     }
 
     const win = new BrowserWindow({
@@ -134,13 +142,16 @@ function createAdvancedWindow(): void {
 
 // Create new info/warning/error window
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
-    let winHeight = 176;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winHeight = 180;
-    }
-    else if (process.platform === 'darwin') {
-        winHeight = 180;
+    switch (process.platform) {
+        case 'win32':
+        case 'darwin':
+            winHeight = 180;
+            break;
+        case 'linux':
+            winHeight = 176;
+            break;
     }
 
     return new BrowserWindow({
@@ -229,7 +240,7 @@ function launchScript(win: BrowserWindow): void {
             cwd: gamePath,
             env: process.env,
             shell: true
-        })
+        });
     }
 
     // Spawn injector process
@@ -379,15 +390,22 @@ ipcMain.on('close-window', () => {
 
 // Launch script
 ipcMain.on('launch-script', () => {
-    let winWidth = 1000;
-    let winHeight = 526;
+    let winWidth = 0;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winWidth = 1005;
-        winHeight = 530;
-    }
-    else if (process.platform === 'darwin') {
-        winHeight = 530;
+    switch (process.platform) {
+        case 'win32':
+            winHeight = 530;
+            winWidth = 1005;
+            break;
+        case 'darwin':
+            winHeight = 530;
+            winWidth = 1000;
+            break;
+        case 'linux':
+            winHeight = 526;
+            winWidth = 1000;
+            break;
     }
 
     // Create terminal window
