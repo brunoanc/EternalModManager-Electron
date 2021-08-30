@@ -60,16 +60,13 @@ function getCurrentWindow(): BrowserWindow | null {
 
 // Create main window
 function createMainWindow(): void {
-    let winHeight = 735;
+    let winHeight = 761;
 
     if (process.platform === 'win32') {
         winHeight = 795;
     }
     else if (process.platform === 'darwin') {
         winHeight = 780;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 761;
     }
 
     mainWindow = new BrowserWindow({
@@ -96,16 +93,13 @@ function createMainWindow(): void {
 
 // Create 'Advanced Info' window
 function createAdvancedWindow(): void {
-    let winHeight = 326;
+    let winHeight = 352;
 
     if (process.platform === 'win32') {
         winHeight = 355;
     }
     else if (process.platform === 'darwin') {
         winHeight = 355;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 352;
     }
 
     const win = new BrowserWindow({
@@ -140,16 +134,13 @@ function createAdvancedWindow(): void {
 
 // Create new info/warning/error window
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
-    let winHeight = 150;
+    let winHeight = 176;
 
     if (process.platform === 'win32') {
         winHeight = 180;
     }
     else if (process.platform === 'darwin') {
         winHeight = 180;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 176;
     }
 
     return new BrowserWindow({
@@ -389,7 +380,7 @@ ipcMain.on('close-window', () => {
 // Launch script
 ipcMain.on('launch-script', () => {
     let winWidth = 1000;
-    let winHeight = 500;
+    let winHeight = 526;
 
     if (process.platform === 'win32') {
         winWidth = 1005;
@@ -397,9 +388,6 @@ ipcMain.on('launch-script', () => {
     }
     else if (process.platform === 'darwin') {
         winHeight = 530;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 526;
     }
 
     // Create terminal window
