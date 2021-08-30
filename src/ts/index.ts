@@ -61,12 +61,12 @@ function isOnlineSafe(modPath: string): boolean {
     let modZip = new admZip(modPath);
 
     for (const modFile of modZip.getEntries()) {
-        let modFileEntry = modFile.entryName.toLowerCase();
-
-        if (modFileEntry.endsWith('/')) {
+        // Skip directories
+        if (modFile.isDirectory) {
             continue;
         }
 
+        let modFileEntry = modFile.entryName.toLowerCase();
         let containerName = modFileEntry.split('/')[0];
         let modName = modFileEntry.slice(containerName.length + 1);
         let soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
