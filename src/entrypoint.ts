@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import fsPromises from 'fs/promises';
-import { spawn, spawnSync, ChildProcessWithoutNullStreams } from 'child_process'
+import { spawn, spawnSync } from 'child_process'
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 
 // Get game path
@@ -267,17 +266,19 @@ function launchScript(win: BrowserWindow): void {
 
 async function handleBackups(restore: boolean): Promise<void> {
     const backups = getBackups(path.join(gamePath, 'base'));
+    const exePath = path.join(gamePath, 'DOOMEternalx64vk.exe.backup');
+    const packageMapSpecPath = path.join(gamePath, 'base', 'packagemapspec.json.backup');
 
-    if (fs.existsSync(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'))) {
-        backups.push(path.join(gamePath, 'DOOMEternalx64vk.exe.backup'));
+    if (fs.existsSync(exePath)) {
+        backups.push(exePath);
     }
 
-    if (fs.existsSync(path.join(gamePath, 'base', 'packagemapspec.json.backup'))) {
-        backups.push(path.join(gamePath, 'base', 'packagemapspec.json.backup'));
+    if (fs.existsSync(packageMapSpecPath)) {
+        backups.push(packageMapSpecPath);
     }
 
-    for (const backup of backups) {
-        if (restore) {
+    if (restore) {
+        for (const backup of backups) {
             try {
                 fs.copyFileSync(backup, backup.slice(0, -7));
             }
@@ -285,7 +286,9 @@ async function handleBackups(restore: boolean): Promise<void> {
                 createInfoWindow('restore-error');
             }
         }
-        else {
+    }
+    else {
+        for (const backup of backups) {
             try {
                 fs.unlinkSync(backup);
             }
