@@ -70,7 +70,7 @@ function createMainWindow(): void {
             winHeight = 780;
             break;
         case 'linux':
-            winHeight = 761;
+            winHeight = 750;
             break;
     }
 
