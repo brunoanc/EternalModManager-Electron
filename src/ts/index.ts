@@ -50,6 +50,9 @@ const onlineSafeModNameKeywords = [
 
 const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'];
 
+var nodeConsole = require('console');
+var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
+
 // Check if mod is online safe
 function isOnlineSafe(modPath: string): boolean {
     let isSafe = true;
@@ -59,6 +62,11 @@ function isOnlineSafe(modPath: string): boolean {
 
     for (const modFile of modZip.getEntries()) {
         let modFileEntry = modFile.entryName.toLowerCase();
+
+        if (modFileEntry.endsWith('/')) {
+            continue;
+        }
+
         let containerName = modFileEntry.split('/')[0];
         let modName = modFileEntry.slice(containerName.length + 1);
         let soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
