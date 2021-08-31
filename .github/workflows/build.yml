@@ -20,10 +20,10 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build project
       run: npm run build
-      
+
     - name: Release AppImage
       uses: marvinpinto/action-automatic-releases@latest
       with:
@@ -32,10 +32,10 @@ jobs:
         files: |
           ${{ github.workspace }}/dist/EternalModManager.AppImage
           ${{ github.workspace }}/dist/EternalModManager.snap
-      
+
   windows-build:
     runs-on: windows-2019
-    
+
     steps:
     - uses: actions/checkout@v2
 
@@ -47,13 +47,38 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build project
       run: npm run build
-      
-    - name: Upload Exe
+
+    - name: Upload exe
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: "${{ github.workspace }}/dist/EternalModManager.exe"
+        tag: ${{ github.ref }}
+
+  macos-build:
+    runs-on: macos-10.15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install NodeJS
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Upload dmg
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "${{ github.workspace }}/dist/EternalModManager.dmg"
         tag: ${{ github.ref }}
