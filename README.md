@@ -1,7 +1,7 @@
 # EternalModManager
 [![Build](https://github.com/PowerBall253/EternalModManager/actions/workflows/build.yml/badge.svg)](https://github.com/PowerBall253/EternalModManager/actions/workflows/build.yml)
 
-Mod manager for DOOM Eternal, built with Electron.
+Cross-platform mod manager for DOOM Eternal, built with Electron.
 
 ## Installing
 ### Flatpak (Linux only)
@@ -28,7 +28,10 @@ snap run eternalmodmanager
 ### AUR (Arch Linux only)
 The app is currently available in the [AUR](https://aur.archlinux.org/packages/eternalmodmanager/). You can use your favorite AUR helper to install it, or download and build manually as described in the [Arch wiki](https://aur.archlinux.org/packages/eternalmodmanager/).
 
-### Portable executable
+### DMG (macOS only)
+Download the latest .dmg file from the release section, then open it, and drag the EternalModManager app to the Applications folder.
+
+### Portable executable (Windows and Linux)
 Download the latest .exe (on Windows) or AppImage (on Linux) file from the release section to your DOOM Eternal directory.
 
 ## Running

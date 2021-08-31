@@ -50,6 +50,9 @@ const onlineSafeModNameKeywords = [
 
 const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'];
 
+var nodeConsole = require('console');
+var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
+
 // Check if mod is online safe
 function isOnlineSafe(modPath: string): boolean {
     let isSafe = true;
@@ -58,6 +61,11 @@ function isOnlineSafe(modPath: string): boolean {
     let modZip = new admZip(modPath);
 
     for (const modFile of modZip.getEntries()) {
+        // Skip directories
+        if (modFile.isDirectory) {
+            continue;
+        }
+
         let modFileEntry = modFile.entryName.toLowerCase();
         let containerName = modFileEntry.split('/')[0];
         let modName = modFileEntry.slice(containerName.length + 1);
@@ -421,6 +429,11 @@ function initButtons(): void {
 
 // Change HTML title
 document.title += ` v${JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')).version} by PowerBall253`;
+
+// Disable launch game button on macOS
+if (process.platform === 'darwin') {
+    (document.getElementById('launch-button')! as HTMLInputElement).disabled = true;
+}
 
 initWatcher();
 initCheckList();

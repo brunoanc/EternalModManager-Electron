@@ -27,6 +27,18 @@ let injectorPath = ''
 let errorType = '';
 let mainWindow: BrowserWindow;
 
+// Replicate modal window functionality
+// Needed to work around macOS removing title bar in modal windows
+function disableWindow(window: BrowserWindow): void {
+    window.webContents.executeJavaScript('document.body.style.pointerEvents = \'none\';');
+    window.setFocusable(false);
+}
+
+function reEnableWindow(window: BrowserWindow): void {
+    window.webContents.executeJavaScript('document.body.style.pointerEvents = \'auto\';');
+    window.setFocusable(true);
+}
+
 // Get current window
 function getCurrentWindow(): BrowserWindow | null {
     let win = mainWindow;
@@ -48,13 +60,18 @@ function getCurrentWindow(): BrowserWindow | null {
 
 // Create main window
 function createMainWindow(): void {
-    let winHeight = 735;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winHeight = 795;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 761;
+    switch (process.platform) {
+        case 'win32':
+            winHeight = 795;
+            break;
+        case 'darwin':
+            winHeight = 780;
+            break;
+        case 'linux':
+            winHeight = 750;
+            break;
     }
 
     mainWindow = new BrowserWindow({
@@ -81,18 +98,20 @@ function createMainWindow(): void {
 
 // Create 'Advanced Info' window
 function createAdvancedWindow(): void {
-    let winHeight = 326;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winHeight = 355;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 352;
+    switch (process.platform) {
+        case 'win32':
+        case 'darwin':
+            winHeight = 355;
+            break;
+        case 'linux':
+            winHeight = 352;
+            break;
     }
 
     const win = new BrowserWindow({
         parent: mainWindow,
-        modal: true,
         width: 600,
         height: winHeight,
         minimizable: false,
@@ -108,11 +127,13 @@ function createAdvancedWindow(): void {
     });
 
     win.on('ready-to-show', () => {
+        disableWindow(mainWindow);
         win.show();
     });
 
     win.on('closed', () => {
         mainWindow.webContents.send('restore-parent');
+        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -121,18 +142,20 @@ function createAdvancedWindow(): void {
 
 // Create new info/warning/error window
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
-    let winHeight = 150;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winHeight = 180;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 176;
+    switch (process.platform) {
+        case 'win32':
+        case 'darwin':
+            winHeight = 180;
+            break;
+        case 'linux':
+            winHeight = 176;
+            break;
     }
 
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
-        modal: true,
         width: 360,
         height: winHeight,
         minimizable: false,
@@ -174,13 +197,16 @@ function loadMainWindow(): void {
 // Create info window and set attributes
 function createInfoWindow(send: string): void {
     const win = newInfoWindow();
+    const parentWindow = win.getParentWindow();
 
     win.on('ready-to-show', () => {
+        disableWindow(parentWindow);
         win.show();
     });
 
     win.on('close', () => {
         win.getParentWindow().webContents.send('restore-parent');
+        reEnableWindow(parentWindow);
     });
 
     win.setMenu(null);
@@ -214,7 +240,7 @@ function launchScript(win: BrowserWindow): void {
             cwd: gamePath,
             env: process.env,
             shell: true
-        })
+        });
     }
 
     // Spawn injector process
@@ -364,21 +390,27 @@ ipcMain.on('close-window', () => {
 
 // Launch script
 ipcMain.on('launch-script', () => {
-    let winWidth = 1000;
-    let winHeight = 500;
+    let winWidth = 0;
+    let winHeight = 0;
 
-    if (process.platform === 'win32') {
-        winWidth = 1005;
-        winHeight = 530;
-    }
-    else if (process.env['FLATPAK_ID']) {
-        winHeight = 526;
+    switch (process.platform) {
+        case 'win32':
+            winHeight = 530;
+            winWidth = 1005;
+            break;
+        case 'darwin':
+            winHeight = 530;
+            winWidth = 1000;
+            break;
+        case 'linux':
+            winHeight = 526;
+            winWidth = 1000;
+            break;
     }
 
     // Create terminal window
     const win = new BrowserWindow({
-        parent: getCurrentWindow() || undefined,
-        modal: true,
+        parent: mainWindow,
         width: winWidth,
         height: winHeight,
         minimizable: false,
@@ -395,8 +427,13 @@ ipcMain.on('launch-script', () => {
 
     win.on('ready-to-show', () => {
         // Launch script
+        disableWindow(mainWindow);
         win.show();
         launchScript(win);
+    });
+
+    win.on('close', () => {
+        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -410,8 +447,14 @@ ipcMain.on('advanced-window', createAdvancedWindow);
 ipcMain.on('settings-info-window', () => {
     const win = newInfoWindow();
 
+
     win.on('ready-to-show', () => {
+        disableWindow(mainWindow);
         win.show();
+    });
+
+    mainWindow.on('close', () => {
+        reEnableWindow(mainWindow);
     });
 
     win.on('closed', createAdvancedWindow);

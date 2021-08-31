@@ -27,6 +27,7 @@
     "build": "npm run compile && electron-builder build --publish never"
   },
   "build": {
+    "productName": "EternalModManager",
     "appId": "com.powerball253.eternalmodmanager",
     "files": [
       "**/*",
@@ -63,6 +64,11 @@
         "Name": "EternalModManager"
       }
     },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities",
+      "icon": "resources/eternalmodmanager.icns"
+    },
     "snap": {
       "title": "EternalModManager",
       "artifactName": "EternalModManager.snap",
@@ -90,6 +96,9 @@
     "portable": {
       "unicode": false,
       "artifactName": "EternalModManager.exe"
+    },
+    "dmg": {
+      "artifactName": "EternalModManager.dmg"
     }
   }
 }
