@@ -236,7 +236,7 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
 function launchScript(win: BrowserWindow): void {
     if (process.platform !== 'win32') {
         // Give executable permissions to the script
-        spawnSync('chmod', ['+x', path.resolve(injectorPath)], {
+        spawnSync('chmod', ['+x', `'${path.resolve(injectorPath)}'`], {
             cwd: gamePath,
             env: process.env,
             shell: true
@@ -244,7 +244,7 @@ function launchScript(win: BrowserWindow): void {
     }
 
     // Spawn injector process
-    let injectorProcess = spawn(path.resolve(injectorPath), [], {
+    let injectorProcess = spawn(`'${path.resolve(injectorPath)}'`, [], {
         cwd: gamePath,
         env: process.env,
         shell: true
