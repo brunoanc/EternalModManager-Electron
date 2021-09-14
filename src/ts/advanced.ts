@@ -42,7 +42,7 @@ document.getElementById('reset-backups')!.addEventListener('click', () => {
 });
 
 document.getElementById('copy-json')!.addEventListener('click', () => {
-    clipboard.writeText('{\n\t"name": "",\n\t"author": "",\n\t"description": "",\n\t"version": "",\n\t"loadPriority": 0,\n\t"requiredVersion": 10\n}');
+    clipboard.writeText('{\n\t"name": "",\n\t"author": "",\n\t"description": "",\n\t"version": "",\n\t"loadPriority": 0,\n\t"requiredVersion": 13\n}');
 
     document.body.style.opacity = '0.5';
     ipcRenderer.send('clipboard-window');
