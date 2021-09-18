@@ -31,13 +31,17 @@ let mainWindow: BrowserWindow;
 // Replicate modal window functionality
 // Needed to work around macOS removing title bar in modal windows
 function disableWindow(window: BrowserWindow): void {
-    window.webContents.executeJavaScript('document.body.style.pointerEvents = \'none\';');
-    window.setFocusable(false);
+    if (process.platform === 'darwin') {
+        window.webContents.executeJavaScript('document.body.style.pointerEvents = \'none\';');
+        window.setFocusable(false);
+    }
 }
 
 function reEnableWindow(window: BrowserWindow): void {
-    window.webContents.executeJavaScript('document.body.style.pointerEvents = \'auto\';');
-    window.setFocusable(true);
+    if (process.platform === 'darwin') {
+        window.webContents.executeJavaScript('document.body.style.pointerEvents = \'auto\';');
+        window.setFocusable(true);
+    }
 }
 
 // Get current window
@@ -113,6 +117,7 @@ function createAdvancedWindow(): void {
 
     const win = new BrowserWindow({
         parent: mainWindow,
+        modal: process.platform !== 'darwin',
         width: 600,
         height: winHeight,
         minimizable: false,
@@ -157,6 +162,7 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
 
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
+        modal: process.platform !== 'darwin',
         width: 360,
         height: winHeight,
         minimizable: false,
@@ -406,6 +412,7 @@ ipcMain.on('launch-script', () => {
     // Create terminal window
     const win = new BrowserWindow({
         parent: mainWindow,
+        modal: process.platform !== 'darwin',
         width: winWidth,
         height: winHeight,
         minimizable: false,
