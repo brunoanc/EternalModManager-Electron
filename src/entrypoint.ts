@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { spawn, spawnSync } from 'child_process'
+import fsPromises from 'fs/promises';
+import { spawn, spawnSync } from 'child_process';
 import { app, ipcMain, dialog, BrowserWindow } from 'electron';
 
 // Get game path
@@ -70,7 +71,7 @@ function createMainWindow(): void {
             winHeight = 780;
             break;
         case 'linux':
-            winHeight = 750;
+            winHeight = 765;
             break;
     }
 
@@ -305,22 +306,16 @@ async function handleBackups(restore: boolean): Promise<void> {
 
     if (restore) {
         for (const backup of backups) {
-            try {
-                fs.copyFileSync(backup, backup.slice(0, -7));
-            }
-            catch {
+            await fsPromises.copyFile(backup, backup.slice(0, -7)).catch(() => {
                 createInfoWindow('restore-error');
-            }
+            });
         }
     }
     else {
         for (const backup of backups) {
-            try {
-                fs.unlinkSync(backup);
-            }
-            catch {
+            await fsPromises.unlink(backup).catch(() => {
                 createInfoWindow('reset-error');
-            }
+            });
         }
     }
 }
