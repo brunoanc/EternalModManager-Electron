@@ -48,10 +48,7 @@ const onlineSafeModNameKeywords = [
     '/decls/campaign'
 ];
 
-const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'];
-
-var nodeConsole = require('console');
-var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
+const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse', 'e6'];
 
 // Check if mod is online safe
 function isOnlineSafe(modPath: string): boolean {
