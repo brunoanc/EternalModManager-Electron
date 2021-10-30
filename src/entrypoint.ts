@@ -251,7 +251,7 @@ function launchScript(win: BrowserWindow): void {
     }
 
     // Spawn injector process
-    let injectorProcess = spawn(`'${path.resolve(injectorPath)}'`, [], {
+    const injectorProcess = spawn(`'${path.resolve(injectorPath)}'`, [], {
         cwd: gamePath,
         env: process.env,
         shell: true
@@ -330,7 +330,7 @@ async function handleBackups(restore: boolean): Promise<void> {
 app.whenReady().then(() => {
     // If running through snap, make sure steam-files is connected
     if (process.env['SNAP']) {
-        let steamFilesConnected = spawnSync('snapctl', ['is-connected', 'steam-files'], {
+        const steamFilesConnected = spawnSync('snapctl', ['is-connected', 'steam-files'], {
             env: process.env,
             shell: true
         }).status === 0;
@@ -506,7 +506,7 @@ ipcMain.on('close-reset-window', () => {
 
         // Delete backup entries from config file
         if (fs.existsSync(settingsPath)) {
-            let settings: string[] = [];
+            const settings: string[] = [];
 
             for (const line of fs.readFileSync(settingsPath, 'utf-8').split('\n').filter(Boolean)) {
                 if (line.startsWith(':')) {

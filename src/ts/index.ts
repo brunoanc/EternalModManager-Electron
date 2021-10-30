@@ -54,8 +54,8 @@ const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'
 function isOnlineSafe(modPath: string): boolean {
     let isSafe = true;
     let isModifyingUnsafeResource = false;
-    let assetsInfoJsons: IZipEntry[] = [];
-    let modZip = new admZip(modPath);
+    const assetsInfoJsons: IZipEntry[] = [];
+    const modZip = new admZip(modPath);
 
     for (const modFile of modZip.getEntries()) {
         // Skip directories
@@ -63,10 +63,10 @@ function isOnlineSafe(modPath: string): boolean {
             continue;
         }
 
-        let modFileEntry = modFile.entryName.toLowerCase();
-        let containerName = modFileEntry.split('/')[0];
-        let modName = modFileEntry.slice(containerName.length + 1);
-        let soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
+        const modFileEntry = modFile.entryName.toLowerCase();
+        const containerName = modFileEntry.split('/')[0];
+        const modName = modFileEntry.slice(containerName.length + 1);
+        const soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
 
         // Allow hidden system files that may end up in mods accidentally
         if (modFileEntry.endsWith('desktop.ini' || modFileEntry.endsWith('.ds_store'))) {
@@ -108,8 +108,8 @@ function isOnlineSafe(modPath: string): boolean {
 
     // Don't allow injecting files into the online-unsafe resources
     for (const assetsInfoEntry of assetsInfoJsons) {
-        let resourceName = assetsInfoEntry.entryName.split('/')[0];
-        let assetsInfo = JSON.parse(modZip.readAsText(assetsInfoEntry));
+        const resourceName = assetsInfoEntry.entryName.split('/')[0];
+        const assetsInfo = JSON.parse(modZip.readAsText(assetsInfoEntry));
 
         if (assetsInfo['resources'] !== null && unsafeResourceNameKeywords.some((keyword) => resourceName.startsWith(keyword))) {
             return false;
@@ -145,17 +145,17 @@ function getZipsInDirectory(directory: string): string[] {
 
 // Load the given mod's info into the given fragment
 function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
-    let modFile = mod[0];
-    let modPath = path.join(mod[1] === 'mod' ? modsPath : disabledModsPath, modFile);
+    const modFile = mod[0];
+    const modPath = path.join(mod[1] === 'mod' ? modsPath : disabledModsPath, modFile);
     let modInfo: ModInfo;
     
     // Read mod info from EternalMod.json
     try {
-        let modZip = new admZip(modPath);
-        let eternalModJson = modZip.getEntry('EternalMod.json');
+        const modZip = new admZip(modPath);
+        const eternalModJson = modZip.getEntry('EternalMod.json');
 
         if (eternalModJson) {
-            let json = JSON.parse(modZip.readAsText(eternalModJson));
+            const json = JSON.parse(modZip.readAsText(eternalModJson));
             modInfo = new ModInfo(json.name, true, isOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
         }
         else {
@@ -172,7 +172,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     }
 
     // Create mod list element
-    let modCheckbox = document.createElement('input');
+    const modCheckbox = document.createElement('input');
     modCheckbox.type = 'checkbox';
     modCheckbox.className = mod[1];
     modCheckbox.checked = mod[1] === 'mod';
@@ -201,7 +201,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     });
 
     // Create mod text
-    let modName = document.createElement('div');
+    const modName = document.createElement('div');
     modName.className = 'mod-button-name';
     modName.innerHTML = modFile;
 
@@ -209,11 +209,11 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     const onlyLoadOnlineSafeMods = fs.existsSync(settingsPath) && fs.readFileSync(settingsPath, 'utf8').includes(':ONLINE_SAFE=1');
 
     // Create online safety check/warning icon
-    let onlineSafeCheck = document.createElement('div');
+    const onlineSafeCheck = document.createElement('div');
     onlineSafeCheck.className = 'mod-button-check';
 
     // Create the mod button
-    let modButton = document.createElement('button');
+    const modButton = document.createElement('button');
     modButton.className = 'mod-button';
     modButton.appendChild(modCheckbox);
     modButton.appendChild(modName);
@@ -240,7 +240,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     else {
         onlineSafeCheck.style.color = 'red';
         onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
-        onlineSafeCheck.title = 'This mod is not safe for multiplayer. Multiplayer will be disabled if this mod is enabled.';
+        onlineSafeCheck.title = 'This mod is not safe for multiplayer. Battlemode and Horde Mode (scoring) will be disabled if this mod is enabled.';
     }
 
     modButton.addEventListener('click', () => {
@@ -269,7 +269,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
                 modOnlineSafety.style.color = 'red';
 
                 if (modCheckbox.checked) {
-                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Multiplayer will be disabled.</strong>';
+                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Battlemode and Horde Mode (scoring) will be disabled.</strong>';
                 }
                 else {
                     modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer.</strong>';
@@ -279,7 +279,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     });
     
     // Append mod li to fragment
-    let modLi = document.createElement('li');
+    const modLi = document.createElement('li');
     modLi.appendChild(modButton);
     fragment.appendChild(modLi);
 }

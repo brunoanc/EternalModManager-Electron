@@ -121,8 +121,8 @@ for (const setting of Object.keys(settingsValuesMap)) {
 
 // Save settings when the button is pressed
 document.getElementById('save-button')!.addEventListener('click', () => {
-    let settingsFile: string[] = [];
-    let extraSettings: string[] = [newLine];
+    const settingsFile: string[] = [];
+    const extraSettings: string[] = [newLine];
 
     // Replace already existing settings
     for (const line of fs.readFileSync(settingsPath, 'utf-8').split(newLine).filter(Boolean)) {
@@ -130,7 +130,7 @@ document.getElementById('save-button')!.addEventListener('click', () => {
             continue;
         }
 
-        let splitLine = line.split('=');
+        const splitLine = line.split('=');
         const settingsKey = splitLine[0].slice(1);
         let settingsValue = '';
 
