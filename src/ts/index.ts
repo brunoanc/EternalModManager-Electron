@@ -48,7 +48,7 @@ const onlineSafeModNameKeywords = [
     '/decls/campaign'
 ];
 
-const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse', 'e6'];
+const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'];
 
 // Check if mod is online safe
 function isOnlineSafe(modPath: string): boolean {
@@ -69,12 +69,17 @@ function isOnlineSafe(modPath: string): boolean {
         const soundContainerPath = path.join(gamePath, 'base', 'sound', 'soundbanks', 'pc', containerName + '.snd');
 
         // Allow hidden system files that may end up in mods accidentally
-        if (modFileEntry.endsWith('desktop.ini' || modFileEntry.endsWith('.ds_store'))) {
+        if (modFileEntry.endsWith('desktop.ini') || modFileEntry.endsWith('.ds_store')) {
             continue;
         }
 
         // Allow sound files
         if (fs.existsSync(soundContainerPath)) {
+            continue;
+        }
+
+        // Allow streamdb mods
+        if (containerName === 'streamdb') {
             continue;
         }
 
@@ -87,6 +92,11 @@ function isOnlineSafe(modPath: string): boolean {
         // Check if mod is modifying an online-unsafe resource
         if (unsafeResourceNameKeywords.some((keyword) => containerName.startsWith(keyword))) {
             isModifyingUnsafeResource = true;
+        }
+
+        // Files with .lwo extension are unsafe
+        if (path.extname(modFileEntry).includes('.lwo')) {
+            isSafe = false;
         }
 
         // Allow modification of anything outside 'generated/decls/'
