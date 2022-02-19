@@ -250,7 +250,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     else {
         onlineSafeCheck.style.color = 'red';
         onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
-        onlineSafeCheck.title = 'This mod is not safe for multiplayer. Battlemode and Horde Mode (scoring) will be disabled if this mod is enabled.';
+        onlineSafeCheck.title = 'This mod is not safe for multiplayer. Battlemode will be disabled if this mod is enabled.';
     }
 
     modButton.addEventListener('click', () => {
@@ -279,7 +279,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
                 modOnlineSafety.style.color = 'red';
 
                 if (modCheckbox.checked) {
-                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Battlemode and Horde Mode (scoring) will be disabled.</strong>';
+                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Battlemode will be disabled.</strong>';
                 }
                 else {
                     modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer.</strong>';
