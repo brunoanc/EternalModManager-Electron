@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import downloadRelease, { GithubReleaseAsset } from '@terascope/fetch-github-release';
+import { downloadRelease } from '@terascope/fetch-github-release';
 import { ipcRenderer } from 'electron';
 
 const gamePath = process.argv.slice(-1)[0];
@@ -54,7 +54,7 @@ ipcRenderer.on('tools-error', () => {
             document.body.removeChild(okButton);
             document.body.removeChild(document.getElementById('yes-button')!);
 
-            downloadRelease('leveste', 'EternalBasher', gamePath, () => { return true }, (asset: GithubReleaseAsset) => { return asset.name === 'EternalModInjectorShell.zip' }, false, false)
+            downloadRelease('leveste', 'EternalBasher', gamePath, () => { return true }, (asset) => { return asset.name === 'EternalModInjectorShell.zip' }, false, false)
             .then(() => {
                 document.getElementById('text')!.innerHTML = 'Modding tools were downloaded succesfully.';
                 ipcRenderer.send('tools-download-complete');
