@@ -238,19 +238,19 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     else if (modInfo.isOnlineSafe) {
         onlineSafeCheck.style.color = 'green';
         onlineSafeCheck.innerHTML = '<strong>✓</strong>';
-        onlineSafeCheck.title = 'This mod is safe for multiplayer.';
+        onlineSafeCheck.title = 'This mod is safe for use in public matches.';
     }
     else if (onlyLoadOnlineSafeMods) {
         onlineSafeCheck.style.color = 'orange';
         onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
-        onlineSafeCheck.title = 'This mod is not safe for multiplayer. It will not be loaded.';
+        onlineSafeCheck.title = 'This mod is not safe for use in public matches. It will not be loaded.';
         modName.style.color = 'gray';
         modCheckbox.disabled = true;
     }
     else {
         onlineSafeCheck.style.color = 'red';
         onlineSafeCheck.innerHTML = '<strong>!&nbsp</strong>';
-        onlineSafeCheck.title = 'This mod is not safe for multiplayer. Battlemode will be disabled if this mod is enabled.';
+        onlineSafeCheck.title = 'This mod is not safe for public matches. Public Battlemode matches will be disabled.';
     }
 
     modButton.addEventListener('click', () => {
@@ -268,21 +268,21 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         }
         else if (modInfo.isOnlineSafe) {
             modOnlineSafety.style.color = 'green';
-            modOnlineSafety.innerHTML = '<strong>This mod is safe for multiplayer.</strong>';
+            modOnlineSafety.innerHTML = '<strong>This mod is safe for use in public matches.</strong>';
         }
         else {
             if (onlyLoadOnlineSafeMods) {
                 modOnlineSafety.style.color = 'orange';
-                modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. It will not be loaded.</strong>';
+                modOnlineSafety.innerHTML = '<strong>This mod is not safe for use in public matches. It will not be loaded.</strong>';
             }
             else {
                 modOnlineSafety.style.color = 'red';
 
                 if (modCheckbox.checked) {
-                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer. Battlemode will be disabled.</strong>';
+                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for use in public matches. Public Battlemode matches will be disabled.</strong>';
                 }
                 else {
-                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for multiplayer.</strong>';
+                    modOnlineSafety.innerHTML = '<strong>This mod is not safe for use in public matches.</strong>';
                 }
             }
         }
