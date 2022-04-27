@@ -155,7 +155,7 @@ function createInfoWindow(send: string): void {
     });
 
     win.on('close', () => {
-        win.getParentWindow().webContents.send('restore-parent');
+        win.getParentWindow()!.webContents.send('restore-parent');
     });
 
     win.setMenu(null);
@@ -235,7 +235,7 @@ function launchScript(win: BrowserWindow): void {
         }
         catch {}
 
-        win.getParentWindow().webContents.send('restore-parent');
+        win.getParentWindow()!.webContents.send('restore-parent');
     });
 }
 
