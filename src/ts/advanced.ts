@@ -8,6 +8,7 @@ const gamePath = process.argv.slice(-1)[0];
 if (process.platform === 'win32') {
     (document.getElementsByClassName('right')[0] as HTMLElement).style.margin = 'initial';
     (document.getElementsByClassName('left')[0] as HTMLElement).style.margin = '13px 0 0 15px';
+    (document.getElementById('vl') as HTMLElement).style.height = '98%';
 }
 
 // Add functionality to buttons
