@@ -437,11 +437,6 @@ function initButtons(): void {
 // Change HTML title
 document.title += ` v${JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')).version} by PowerBall253`;
 
-// Disable launch game button on macOS
-if (process.platform === 'darwin') {
-    (document.getElementById('launch-button')! as HTMLInputElement).disabled = true;
-}
-
 initWatcher();
 initCheckList();
 initDragAndDrop();
