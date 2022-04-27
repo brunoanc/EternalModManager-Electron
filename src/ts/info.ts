@@ -5,9 +5,12 @@ import { ipcRenderer } from 'electron';
 
 const gamePath = process.argv.slice(-1)[0];
 
-// Custom windows styling
+// Custom windows/linux styling
 if (process.platform === 'win32') {
     document.getElementById('ok-button')!.style.left = '255px';
+}
+else {
+    document.getElementById('ok-button')!.style.top = '120px';
 }
 
 // Set the info window depending on the sent message
