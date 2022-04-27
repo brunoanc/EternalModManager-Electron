@@ -28,22 +28,6 @@ let injectorPath = ''
 let errorType = '';
 let mainWindow: BrowserWindow;
 
-// Replicate modal window functionality
-// Needed to work around macOS removing title bar in modal windows
-function disableWindow(window: BrowserWindow): void {
-    if (process.platform === 'darwin') {
-        window.webContents.executeJavaScript('document.body.style.pointerEvents = \'none\';');
-        window.setFocusable(false);
-    }
-}
-
-function reEnableWindow(window: BrowserWindow): void {
-    if (process.platform === 'darwin') {
-        window.webContents.executeJavaScript('document.body.style.pointerEvents = \'auto\';');
-        window.setFocusable(true);
-    }
-}
-
 // Get current window
 function getCurrentWindow(): BrowserWindow | null {
     let win = mainWindow;
@@ -65,23 +49,9 @@ function getCurrentWindow(): BrowserWindow | null {
 
 // Create main window
 function createMainWindow(): void {
-    let winHeight = 0;
-
-    switch (process.platform) {
-        case 'win32':
-            winHeight = 795;
-            break;
-        case 'darwin':
-            winHeight = 780;
-            break;
-        case 'linux':
-            winHeight = 750;
-            break;
-    }
-
     mainWindow = new BrowserWindow({
         width: 610,
-        height: winHeight,
+        height: 795,
         maximizable: false,
         resizable: false,
         show: false,
@@ -107,17 +77,16 @@ function createAdvancedWindow(): void {
 
     switch (process.platform) {
         case 'win32':
-        case 'darwin':
             winHeight = 355;
             break;
         case 'linux':
-            winHeight = 352;
+            winHeight = 365;
             break;
     }
 
     const win = new BrowserWindow({
         parent: mainWindow,
-        modal: process.platform !== 'darwin',
+        modal: true,
         width: 600,
         height: winHeight,
         minimizable: false,
@@ -133,13 +102,11 @@ function createAdvancedWindow(): void {
     });
 
     win.on('ready-to-show', () => {
-        disableWindow(mainWindow);
         win.show();
     });
 
     win.on('closed', () => {
         mainWindow.webContents.send('restore-parent');
-        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -152,17 +119,16 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
 
     switch (process.platform) {
         case 'win32':
-        case 'darwin':
             winHeight = 180;
             break;
         case 'linux':
-            winHeight = 176;
+            winHeight = 175;
             break;
     }
 
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
-        modal: process.platform !== 'darwin',
+        modal: true,
         width: 360,
         height: winHeight,
         minimizable: false,
@@ -207,13 +173,11 @@ function createInfoWindow(send: string): void {
     const parentWindow = win.getParentWindow();
 
     win.on('ready-to-show', () => {
-        disableWindow(parentWindow);
         win.show();
     });
 
     win.on('close', () => {
         win.getParentWindow().webContents.send('restore-parent');
-        reEnableWindow(parentWindow);
     });
 
     win.setMenu(null);
@@ -399,12 +363,8 @@ ipcMain.on('launch-script', () => {
             winHeight = 530;
             winWidth = 1005;
             break;
-        case 'darwin':
-            winHeight = 530;
-            winWidth = 1000;
-            break;
         case 'linux':
-            winHeight = 526;
+            winHeight = 530;
             winWidth = 1000;
             break;
     }
@@ -412,7 +372,7 @@ ipcMain.on('launch-script', () => {
     // Create terminal window
     const win = new BrowserWindow({
         parent: mainWindow,
-        modal: process.platform !== 'darwin',
+        modal: true,
         width: winWidth,
         height: winHeight,
         minimizable: false,
@@ -429,13 +389,8 @@ ipcMain.on('launch-script', () => {
 
     win.on('ready-to-show', () => {
         // Launch script
-        disableWindow(mainWindow);
         win.show();
         launchScript(win);
-    });
-
-    win.on('close', () => {
-        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -451,12 +406,7 @@ ipcMain.on('settings-info-window', () => {
 
 
     win.on('ready-to-show', () => {
-        disableWindow(mainWindow);
         win.show();
-    });
-
-    mainWindow.on('close', () => {
-        reEnableWindow(mainWindow);
     });
 
     win.on('closed', createAdvancedWindow);
