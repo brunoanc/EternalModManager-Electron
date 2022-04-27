@@ -5,7 +5,7 @@ import fileWatcher, { FSWatcher } from 'chokidar';
 import admZip, { IZipEntry } from 'adm-zip';
 import dragDrop from 'drag-drop';
 
-const gamePath = process.argv.slice(-1)[0];
+const gamePath = process.argv.slice(process.platform === 'win32' ? -2 : -1)[0];
 const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 const modsPath = path.join(gamePath, 'Mods');
 const disabledModsPath = path.join(gamePath, 'DisabledMods');

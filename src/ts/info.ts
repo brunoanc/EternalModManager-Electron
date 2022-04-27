@@ -3,7 +3,7 @@ import fs from 'fs';
 import { downloadRelease } from '@terascope/fetch-github-release';
 import { ipcRenderer } from 'electron';
 
-const gamePath = process.argv.slice(-1)[0];
+const gamePath = process.argv.slice(process.platform === 'win32' ? -2 : -1)[0];
 
 // Custom windows/linux styling
 if (process.platform === 'win32') {
