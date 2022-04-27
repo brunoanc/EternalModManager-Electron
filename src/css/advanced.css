@@ -1,3 +1,7 @@
+html {
+    height: 95%;
+}
+
 body {
     font-family: 'Segoe UI', system-ui, monospace;
     font-size: 12px;
@@ -37,7 +41,7 @@ body {
 #vl {
     background: rgb(236, 233, 233);
     width: 0.5%;
-    height: 323px;
+    height: 98.5%;
 }
 
 .injector-header {

@@ -1,6 +1,9 @@
 body {
     font-family: 'Segoe UI', system-ui, monospace;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #terminal {

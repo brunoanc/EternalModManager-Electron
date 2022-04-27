@@ -73,22 +73,11 @@ function createMainWindow(): void {
 
 // Create 'Advanced Info' window
 function createAdvancedWindow(): void {
-    let winHeight = 0;
-
-    switch (process.platform) {
-        case 'win32':
-            winHeight = 355;
-            break;
-        case 'linux':
-            winHeight = 365;
-            break;
-    }
-
     const win = new BrowserWindow({
         parent: mainWindow,
         modal: true,
         width: 600,
-        height: winHeight,
+        height: 365,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -115,22 +104,11 @@ function createAdvancedWindow(): void {
 
 // Create new info/warning/error window
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
-    let winHeight = 0;
-
-    switch (process.platform) {
-        case 'win32':
-            winHeight = 180;
-            break;
-        case 'linux':
-            winHeight = 175;
-            break;
-    }
-
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
         modal: true,
         width: 360,
-        height: winHeight,
+        height: 180,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -355,26 +333,12 @@ ipcMain.on('close-window', () => {
 
 // Launch script
 ipcMain.on('launch-script', () => {
-    let winWidth = 0;
-    let winHeight = 0;
-
-    switch (process.platform) {
-        case 'win32':
-            winHeight = 530;
-            winWidth = 1005;
-            break;
-        case 'linux':
-            winHeight = 530;
-            winWidth = 1000;
-            break;
-    }
-
     // Create terminal window
     const win = new BrowserWindow({
         parent: mainWindow,
         modal: true,
-        width: winWidth,
-        height: winHeight,
+        width: 1000,
+        height: 530,
         minimizable: false,
         maximizable: false,
         resizable: false,
