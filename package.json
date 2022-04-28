@@ -1,6 +1,6 @@
 {
   "name": "eternalmodmanager",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "homepage": "https://github.com/PowerBall253/EternalModManager",
   "description": "Cross platform mod manager for DOOM Eternal.",
   "main": "build/entrypoint.js",
