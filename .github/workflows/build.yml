@@ -24,6 +24,13 @@ jobs:
     - name: Build project
       run: npm run build
 
+    - name: Upload snap
+      uses: snapcore/action-publish@v1
+      with:
+        store_login: ${{ secrets.STORE_LOGIN }}
+        snap: ${{ github.workspace }}/dist/EternalModManager.snap
+        release: stable
+
     - name: Release AppImage
       uses: marvinpinto/action-automatic-releases@latest
       with:
@@ -31,7 +38,6 @@ jobs:
         prerelease: false
         files: |
           ${{ github.workspace }}/dist/EternalModManager.AppImage
-          ${{ github.workspace }}/dist/EternalModManager.snap
 
   windows-build:
     runs-on: windows-latest
