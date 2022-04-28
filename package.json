@@ -57,33 +57,11 @@
       "icon": "resources/eternalmodmanager.png",
       "category": "Utility",
       "target": [
-        "AppImage",
-        "snap"
+        "AppImage"
       ],
       "desktop": {
         "Name": "EternalModManager"
       }
-    },
-    "snap": {
-      "title": "EternalModManager",
-      "artifactName": "EternalModManager.snap",
-      "confinement": "strict",
-      "summary": "Mod manager for DOOM Eternal.",
-      "grade": "stable",
-      "plugs": [
-        "default",
-        "removable-media",
-        {
-          "steam-files": {
-            "interface": "personal-files",
-            "write": [
-              "$HOME/.var/app/com.valvesoftware.Steam/steamapps/common/DOOMEternal",
-              "$HOME/.local/share/Steam/steamapps/common/DOOMEternal",
-              "$HOME/.steam/steam/steamapps/common/DOOMEternal"
-            ]
-          }
-        }
-      ]
     },
     "appImage": {
       "artifactName": "EternalModManager.AppImage"
