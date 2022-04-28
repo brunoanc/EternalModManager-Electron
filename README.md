@@ -19,7 +19,7 @@ The app is currently available in the [Snap Store](https://snapcraft.io/eternalm
 ```
 snap install eternalmodmanager
 ```
-and reboot your system. The app should now be available in your DE's menu, or you can run it in your terminal with the following commands:
+and reboot your system. The app should now be available in your DE's menu, or you can run it in your terminal with either of the following commands:
 ```
 eternalmodmanager
 snap run eternalmodmanager
