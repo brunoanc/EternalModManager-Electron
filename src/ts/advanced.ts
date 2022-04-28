@@ -4,13 +4,6 @@ import { shell, clipboard, ipcRenderer } from 'electron';
 
 const gamePath = process.argv.slice(process.platform === 'win32' ? -2 : -1)[0];
 
-// Custom windows styling
-if (process.platform === 'win32') {
-    (document.getElementsByClassName('right')[0] as HTMLElement).style.margin = 'initial';
-    (document.getElementsByClassName('left')[0] as HTMLElement).style.margin = '13px 0 0 15px';
-    (document.getElementById('vl') as HTMLElement).style.height = '98%';
-}
-
 // Add functionality to buttons
 document.getElementById('open-mods')!.addEventListener('click', () => {
     shell.openPath(path.join(gamePath, 'Mods'));
@@ -142,7 +135,7 @@ document.getElementById('save-button')!.addEventListener('click', () => {
             else {
                 settingsValue = (document.getElementById(settingsValuesMap[settingsKey])! as HTMLInputElement).checked ? '1' : '0';
             }
-    
+
             settingsFile.push(`:${settingsKey}=${settingsValue}`);
             delete settingsValuesMap[settingsKey];
         }

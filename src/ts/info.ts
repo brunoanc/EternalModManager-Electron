@@ -5,14 +5,6 @@ import { ipcRenderer } from 'electron';
 
 const gamePath = process.argv.slice(process.platform === 'win32' ? -2 : -1)[0];
 
-// Custom windows/linux styling
-if (process.platform === 'win32') {
-    document.getElementById('ok-button')!.style.left = '255px';
-}
-else {
-    document.getElementById('ok-button')!.style.top = '120px';
-}
-
 // Set the info window depending on the sent message
 ipcRenderer.on('snap-connections-error', () => {
     document.title = 'Error';
@@ -42,9 +34,6 @@ ipcRenderer.on('tools-error', () => {
 
         const yesButton = document.createElement('button');
         yesButton.innerHTML = 'Yes';
-        yesButton.style.position = 'absolute';
-        yesButton.style.top = '120px';
-        yesButton.style.left = '165px';
         yesButton.id = 'yes-button';
 
         yesButton.addEventListener('click', () => {
@@ -97,16 +86,13 @@ ipcRenderer.on('restore-info', () => {
     document.getElementById('text')!.innerHTML = 'This will restore your game to vanilla state by restoring the unmodded backed up game files.<br>' +
         'This process might take a while depending on the speed of your disk, so please be patient.<br>' +
         'Are you sure you want to continue?';
-    
+
     // Setup 'Yes' button
     const button = document.getElementById('ok-button')!;
     button.innerHTML = 'No';
 
     const yesButton = document.createElement('button');
     yesButton.innerHTML = 'Yes';
-    yesButton.style.position = 'absolute';
-    yesButton.style.top = process.platform === 'win32' ? '115px' : '120px';
-    yesButton.style.left = '165px';
     yesButton.id = 'yes-button';
 
     yesButton.addEventListener('click', () => {
@@ -142,16 +128,13 @@ ipcRenderer.on('reset-info', () => {
     document.getElementById('text')!.innerHTML = 'This will delete your backed up game files.<br>' +
         'The next time mods are injected the backups will be re-created, so make sure to verify your game files after doing this.<br>' +
         'Are you sure you want to continue?';
-    
+
     // Setup 'Yes' button
     const button = document.getElementById('ok-button')!;
     button.innerHTML = 'No';
 
     const yesButton = document.createElement('button');
     yesButton.innerHTML = 'Yes';
-    yesButton.style.position = 'absolute';
-    yesButton.style.top = process.platform === 'win32' ? '115px' : '120px';
-    yesButton.style.left = '165px';
     yesButton.id = 'yes-button';
 
     yesButton.addEventListener('click', () => {

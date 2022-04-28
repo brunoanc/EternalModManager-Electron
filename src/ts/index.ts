@@ -149,7 +149,7 @@ function getZipsInDirectory(directory: string): string[] {
             zips.push(filePath);
         }
     }
-  
+
     return zips;
 }
 
@@ -158,7 +158,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     const modFile = mod[0];
     const modPath = path.join(mod[1] === 'mod' ? modsPath : disabledModsPath, modFile);
     let modInfo: ModInfo;
-    
+
     // Read mod info from EternalMod.json
     try {
         const modZip = new admZip(modPath);
@@ -261,7 +261,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         document.getElementById('mod-min-version')!.innerHTML = modInfo.requiredVersion;
         document.getElementById('mod-load-priority')!.innerHTML = modInfo.loadPriority;
         const modOnlineSafety = document.getElementById('mod-online-safety')!;
-        
+
         if (!modInfo.isValid) {
             modOnlineSafety.style.color = 'red';
             modOnlineSafety.innerHTML = '<strong>Invalid .zip file.</strong>';
@@ -287,7 +287,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
             }
         }
     });
-    
+
     // Append mod li to fragment
     const modLi = document.createElement('li');
     modLi.appendChild(modButton);
@@ -328,7 +328,7 @@ function makeModDirectories(): void {
     if (!fs.existsSync(modsPath)) {
         fs.mkdirSync(modsPath);
     }
-    
+
     if (!fs.existsSync(disabledModsPath)) {
         fs.mkdirSync(disabledModsPath);
     }
@@ -346,13 +346,13 @@ function initWatcher(): void {
     });
 
     let watcherReady = false;
-    
+
     // Get mods and display them when ready
     watcher.on('ready', () => {
         getMods();
         watcherReady = true;
     });
-    
+
     watcher.on('all', (event, filePath) => {
         if (!watcherReady) {
             return;
@@ -361,7 +361,7 @@ function initWatcher(): void {
         if (!filePath.startsWith(modsPath) && !filePath.startsWith(disabledModsPath) && !filePath.startsWith(settingsPath)) {
             return;
         }
-        
+
         // Get new mods
         makeModDirectories();
         getMods();
@@ -436,6 +436,11 @@ function initButtons(): void {
 
 // Change HTML title
 document.title += ` v${JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')).version} by PowerBall253`;
+
+// Disable launch game button on macOS
+if (process.platform === 'darwin') {
+    (document.getElementById('launch-button')! as HTMLInputElement).disabled = true;
+}
 
 initWatcher();
 initCheckList();

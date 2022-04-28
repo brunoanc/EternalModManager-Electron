@@ -43,8 +43,14 @@ button {
 
 #ok-button {
     position: absolute;
-    top: 115px;
+    top: 120px;
     left: 265px;
+}
+
+#yes-button {
+    position: absolute;
+    top: 120px;
+    left: 165px;
 }
 
 button:hover {

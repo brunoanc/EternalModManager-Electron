@@ -41,18 +41,18 @@ term.onKey((key) => {
                     realKey = '\b \b';
                     stdinChars--;
                 }
-    
+
                 break;
         }
     }
 
     term.write(realKey);
-    ipcRenderer.send("terminal-keystroke", key.key);
+    ipcRenderer.send('terminal-keystroke', key.key);
 });
 
 // Enably copy with Ctrl+C
 term.attachCustomKeyEventHandler((event) => {
-    if (event.ctrlKey && event.code === "KeyC" && event.type === "keydown") {
+    if (event.ctrlKey && event.code === 'KeyC' && event.type === 'keydown') {
         if (term.hasSelection()) {
             clipboard.writeText(term.getSelection());
             return false;

@@ -28,6 +28,22 @@ let injectorPath = ''
 let errorType = '';
 let mainWindow: BrowserWindow;
 
+// Replicate modal window functionality
+// Needed to work around macOS removing title bar in modal windows
+function disableWindow(window: BrowserWindow): void {
+    if (process.platform === 'darwin') {
+        window.webContents.executeJavaScript('document.body.style.pointerEvents = \'none\';');
+        window.setFocusable(false);
+    }
+}
+
+function reEnableWindow(window: BrowserWindow): void {
+    if (process.platform === 'darwin') {
+        window.webContents.executeJavaScript('document.body.style.pointerEvents = \'auto\';');
+        window.setFocusable(true);
+    }
+}
+
 // Get current window
 function getCurrentWindow(): BrowserWindow | null {
     let win = mainWindow;
@@ -52,8 +68,9 @@ function createMainWindow(): void {
     mainWindow = new BrowserWindow({
         width: 610,
         height: 770,
+        useContentSize: true,
         maximizable: false,
-        //resizable: false,
+        resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -75,12 +92,13 @@ function createMainWindow(): void {
 function createAdvancedWindow(): void {
     const win = new BrowserWindow({
         parent: mainWindow,
-        modal: true,
+        modal: process.platform !== 'darwin',
         width: 600,
         height: 340,
+        useContentSize: true,
         minimizable: false,
         maximizable: false,
-        //resizable: false,
+        resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -91,11 +109,13 @@ function createAdvancedWindow(): void {
     });
 
     win.on('ready-to-show', () => {
+        disableWindow(mainWindow);
         win.show();
     });
 
     win.on('closed', () => {
         mainWindow.webContents.send('restore-parent');
+        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -106,12 +126,13 @@ function createAdvancedWindow(): void {
 function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
     return new BrowserWindow({
         parent: parent || getCurrentWindow() || undefined,
-        modal: true,
+        modal: process.platform !== 'darwin',
         width: 360,
         height: 155,
+        useContentSize: true,
         minimizable: false,
         maximizable: false,
-        //resizable: false,
+        resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -148,14 +169,16 @@ function loadMainWindow(): void {
 // Create info window and set attributes
 function createInfoWindow(send: string): void {
     const win = newInfoWindow();
-    const parentWindow = win.getParentWindow();
+    const parentWindow = win.getParentWindow()!;
 
     win.on('ready-to-show', () => {
         win.show();
+        disableWindow(parentWindow);
     });
 
     win.on('close', () => {
         win.getParentWindow()!.webContents.send('restore-parent');
+        reEnableWindow(parentWindow);
     });
 
     win.setMenu(null);
@@ -177,7 +200,7 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
             backups!.push(path.join(dirPath, file));
         }
     }
-  
+
     return backups;
 }
 
@@ -336,12 +359,13 @@ ipcMain.on('launch-script', () => {
     // Create terminal window
     const win = new BrowserWindow({
         parent: mainWindow,
-        modal: true,
+        modal: process.platform !== 'darwin',
         width: 1000,
         height: 505,
+        useContentSize: true,
         minimizable: false,
         maximizable: false,
-        //resizable: false,
+        resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -353,8 +377,13 @@ ipcMain.on('launch-script', () => {
 
     win.on('ready-to-show', () => {
         // Launch script
+        disableWindow(mainWindow);
         win.show();
         launchScript(win);
+    });
+
+    win.on('close', () => {
+        reEnableWindow(mainWindow);
     });
 
     win.setMenu(null);
@@ -368,9 +397,13 @@ ipcMain.on('advanced-window', createAdvancedWindow);
 ipcMain.on('settings-info-window', () => {
     const win = newInfoWindow();
 
-
     win.on('ready-to-show', () => {
+        disableWindow(mainWindow);
         win.show();
+    });
+
+    mainWindow.on('close', () => {
+        reEnableWindow(mainWindow);
     });
 
     win.on('closed', createAdvancedWindow);
@@ -427,7 +460,7 @@ ipcMain.on('close-reset-window', () => {
                     settings.push(line);
                 }
             }
-    
+
             fs.writeFileSync(settingsPath, settings.join(newLine));
         }
 
