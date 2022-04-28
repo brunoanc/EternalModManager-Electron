@@ -43,7 +43,7 @@ ipcRenderer.on('tools-error', () => {
         const yesButton = document.createElement('button');
         yesButton.innerHTML = 'Yes';
         yesButton.style.position = 'absolute';
-        yesButton.style.top = '115px';
+        yesButton.style.top = '120px';
         yesButton.style.left = '165px';
         yesButton.id = 'yes-button';
 
@@ -105,7 +105,7 @@ ipcRenderer.on('restore-info', () => {
     const yesButton = document.createElement('button');
     yesButton.innerHTML = 'Yes';
     yesButton.style.position = 'absolute';
-    yesButton.style.top = '115px';
+    yesButton.style.top = process.platform === 'win32' ? '115px' : '120px';
     yesButton.style.left = '165px';
     yesButton.id = 'yes-button';
 
@@ -150,7 +150,7 @@ ipcRenderer.on('reset-info', () => {
     const yesButton = document.createElement('button');
     yesButton.innerHTML = 'Yes';
     yesButton.style.position = 'absolute';
-    yesButton.style.top = '115px';
+    yesButton.style.top = process.platform === 'win32' ? '115px' : '120px';
     yesButton.style.left = '165px';
     yesButton.id = 'yes-button';
 
