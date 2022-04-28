@@ -113,7 +113,7 @@ function createAdvancedWindow(): void {
         win.show();
     });
 
-    win.on('closed', () => {
+    win.on('close', () => {
         mainWindow.webContents.send('restore-parent');
         reEnableWindow(mainWindow);
     });
@@ -402,7 +402,7 @@ ipcMain.on('settings-info-window', () => {
         win.show();
     });
 
-    mainWindow.on('close', () => {
+    win.on('close', () => {
         reEnableWindow(mainWindow);
     });
 
