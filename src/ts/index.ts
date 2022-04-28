@@ -5,7 +5,7 @@ import fileWatcher, { FSWatcher } from 'chokidar';
 import admZip, { IZipEntry } from 'adm-zip';
 import dragDrop from 'drag-drop';
 
-const gamePath = process.argv.slice(-1)[0];
+const gamePath = process.argv.slice(process.platform === 'win32' ? -2 : -1)[0];
 const settingsPath = path.join(gamePath, 'EternalModInjector Settings.txt');
 const modsPath = path.join(gamePath, 'Mods');
 const disabledModsPath = path.join(gamePath, 'DisabledMods');
@@ -436,11 +436,6 @@ function initButtons(): void {
 
 // Change HTML title
 document.title += ` v${JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')).version} by PowerBall253`;
-
-// Disable launch game button on macOS
-if (process.platform === 'darwin') {
-    (document.getElementById('launch-button')! as HTMLInputElement).disabled = true;
-}
 
 initWatcher();
 initCheckList();

@@ -7,11 +7,11 @@
   "author": "PowerBall253 <bruno@powerball253.com> (https://powerball253.com)",
   "license": "MIT",
   "devDependencies": {
-    "@types/adm-zip": "^0.4.34",
+    "@types/adm-zip": "^0.5.0",
     "copyfiles": "^2.4.1",
-    "electron": "^13.1.5",
-    "electron-builder": "^22.14.3",
-    "typescript": "^4.6.2"
+    "electron": "^18.1.0",
+    "electron-builder": "^23.0.3",
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "@terascope/fetch-github-release": "^0.8.7",
@@ -57,38 +57,11 @@
       "icon": "resources/eternalmodmanager.png",
       "category": "Utility",
       "target": [
-        "AppImage",
-        "snap"
+        "AppImage"
       ],
       "desktop": {
         "Name": "EternalModManager"
       }
-    },
-    "mac": {
-      "target": "dmg",
-      "category": "public.app-category.utilities",
-      "icon": "resources/eternalmodmanager.icns"
-    },
-    "snap": {
-      "title": "EternalModManager",
-      "artifactName": "EternalModManager.snap",
-      "confinement": "strict",
-      "summary": "Mod manager for DOOM Eternal.",
-      "grade": "stable",
-      "plugs": [
-        "default",
-        "removable-media",
-        {
-          "steam-files": {
-            "interface": "personal-files",
-            "write": [
-              "$HOME/.var/app/com.valvesoftware.Steam/steamapps/common/DOOMEternal",
-              "$HOME/.local/share/Steam/steamapps/common/DOOMEternal",
-              "$HOME/.steam/steam/steamapps/common/DOOMEternal"
-            ]
-          }
-        }
-      ]
     },
     "appImage": {
       "artifactName": "EternalModManager.AppImage"
@@ -96,9 +69,6 @@
     "portable": {
       "unicode": false,
       "artifactName": "EternalModManager.exe"
-    },
-    "dmg": {
-      "artifactName": "EternalModManager.dmg"
     }
   }
 }
