@@ -6,8 +6,8 @@ on:
       - "v*"
 
 jobs:
-  windows-build:
-    runs-on: windows-2019
+  linux-build:
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -24,10 +24,35 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Release exe
+    - name: Release AppImage
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
-          **/EternalModManager.exe
+          ${{ github.workspace }}/dist/EternalModManager.AppImage
+
+  windows-build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install NodeJS
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Upload exe
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "${{ github.workspace }}/dist/EternalModManager.exe"
+        tag: ${{ github.ref }}
