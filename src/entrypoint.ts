@@ -70,7 +70,7 @@ function createMainWindow(): void {
         height: 770,
         useContentSize: true,
         maximizable: false,
-        //resizable: false,
+        thickFrame: false, // Workaround for https://github.com/electron/electron/issues/31233
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -84,6 +84,7 @@ function createMainWindow(): void {
         mainWindow.show();
     });
 
+    mainWindow.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
     mainWindow.setMenu(null);
     mainWindow.loadFile(path.join(__dirname, 'html', 'index.html'));
 }
@@ -98,7 +99,7 @@ function createAdvancedWindow(): void {
         useContentSize: true,
         minimizable: false,
         maximizable: false,
-        //resizable: false,
+        thickFrame: false, // Workaround for https://github.com/electron/electron/issues/31233
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -118,6 +119,7 @@ function createAdvancedWindow(): void {
         reEnableWindow(mainWindow);
     });
 
+    win.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
     win.setMenu(null);
     win.loadFile(path.join(__dirname, 'html', 'advanced.html'));
 }
@@ -132,7 +134,7 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         useContentSize: true,
         minimizable: false,
         maximizable: false,
-        //resizable: false,
+        thickFrame: false, // Workaround for https://github.com/electron/electron/issues/31233
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -160,6 +162,7 @@ function loadMainWindow(): void {
             mainWindow.show();
         });
 
+        mainWindow.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
         mainWindow.setMenu(null);
         mainWindow.loadFile(path.join(__dirname, 'html', 'info.html'));
         errorType = 'tools-error';
@@ -181,6 +184,7 @@ function createInfoWindow(send: string): void {
         reEnableWindow(parentWindow);
     });
 
+    win.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
     win.setMenu(null);
     win.loadFile(path.join(__dirname, 'html', 'info.html'));
     errorType = send;
@@ -307,6 +311,7 @@ app.whenReady().then(() => {
                 mainWindow.show();
             });
 
+            mainWindow.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
             mainWindow.setMenu(null);
             mainWindow.loadFile(path.join(__dirname, 'html', 'info.html'));
             errorType = 'snap-connections-error';
@@ -365,7 +370,7 @@ ipcMain.on('launch-script', () => {
         useContentSize: true,
         minimizable: false,
         maximizable: false,
-        //resizable: false,
+        thickFrame: false, // Workaround for https://github.com/electron/electron/issues/31233
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -386,6 +391,7 @@ ipcMain.on('launch-script', () => {
         reEnableWindow(mainWindow);
     });
 
+    win.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
     win.setMenu(null);
     win.loadFile(path.join(__dirname, 'html', 'terminal.html'));
 });
@@ -407,6 +413,7 @@ ipcMain.on('settings-info-window', () => {
     });
 
     win.on('closed', createAdvancedWindow);
+    win.setResizable(false); // Workaround for https://github.com/electron/electron/issues/31233
     win.setMenu(null);
     win.loadFile(path.join(__dirname, 'html', 'info.html'));
     errorType = 'settings-info';
