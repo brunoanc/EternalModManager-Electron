@@ -24,9 +24,10 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Upload exe
-      uses: svenstaro/upload-release-action@v2
+    - name: Release exe
+      uses: marvinpinto/action-automatic-releases@latest
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: "${{ github.workspace }}/dist/EternalModManager.exe"
-        tag: ${{ github.ref }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+          ${{ github.workspace }}/dist/EternalModManager.exe
