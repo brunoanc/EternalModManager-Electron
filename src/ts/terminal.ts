@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, clipboard } from 'electron';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
@@ -48,4 +48,24 @@ term.onKey((key) => {
 
     term.write(realKey);
     ipcRenderer.send("terminal-keystroke", key.key);
+});
+
+// Enably copy with Ctrl+C
+term.attachCustomKeyEventHandler((event) => {
+    if (event.ctrlKey && event.code === "KeyC" && event.type === "keydown") {
+        if (term.hasSelection()) {
+            clipboard.writeText(term.getSelection());
+            return false;
+        }
+    }
+
+    return true;
+});
+
+// Enable copy with right click
+document.getElementById('terminal')!.addEventListener('contextmenu', () => {
+    if (term.hasSelection()) {
+        clipboard.writeText(term.getSelection());
+        term.select(0, 0, 0);
+    }
 });
