@@ -70,7 +70,7 @@ function createMainWindow(): void {
         height: 770,
         useContentSize: true,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -98,7 +98,7 @@ function createAdvancedWindow(): void {
         useContentSize: true,
         minimizable: false,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -132,7 +132,7 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         useContentSize: true,
         minimizable: false,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -365,7 +365,7 @@ ipcMain.on('launch-script', () => {
         useContentSize: true,
         minimizable: false,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
