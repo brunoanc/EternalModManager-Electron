@@ -14,8 +14,11 @@ and reboot your system. The app should now be available in your DE's menu, or yo
 flatpak run com.powerball253.eternalmodmanager
 ```
 
+### Linux (AppImage) (not recommended)
+Download the latest AppImage file from the release section to your DOOM Eternal directory, then run it.
+
 ### Windows (Self-contained executable)
-Download the latest .exe file from the release section to your DOOM Eternal directory.
+Download the latest .exe file from the release section to your DOOM Eternal directory, then run it.
 
 ## Running
 First, make sure you have the latest LTS version of NodeJS and `npm` installed. Then clone the repo, and run the following commands:
