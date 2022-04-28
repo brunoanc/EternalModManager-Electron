@@ -51,9 +51,9 @@ function getCurrentWindow(): BrowserWindow | null {
 function createMainWindow(): void {
     mainWindow = new BrowserWindow({
         width: 610,
-        height: 795,
+        height: 770,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -77,10 +77,10 @@ function createAdvancedWindow(): void {
         parent: mainWindow,
         modal: true,
         width: 600,
-        height: 365,
+        height: 340,
         minimizable: false,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -108,10 +108,10 @@ function newInfoWindow(parent?: BrowserWindow): BrowserWindow {
         parent: parent || getCurrentWindow() || undefined,
         modal: true,
         width: 360,
-        height: 180,
+        height: 155,
         minimizable: false,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
@@ -338,10 +338,10 @@ ipcMain.on('launch-script', () => {
         parent: mainWindow,
         modal: true,
         width: 1000,
-        height: 530,
+        height: 505,
         minimizable: false,
         maximizable: false,
-        resizable: false,
+        //resizable: false,
         show: false,
         icon: path.join(__dirname, 'assets', 'icon.ico'),
         webPreferences: {
