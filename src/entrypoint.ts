@@ -201,7 +201,7 @@ function getBackups(dirPath: string, backups?: string[]): string[] {
             backups = getBackups(path.join(dirPath, file), backups);
         }
         else if (file.endsWith('.resources.backup') || file.endsWith('.snd.backup')) {
-            backups!.push(path.join(dirPath, file));
+            backups.push(path.join(dirPath, file));
         }
     }
 
@@ -238,7 +238,7 @@ function launchScript(win: BrowserWindow): void {
     // Handle stdin
     let stdinBuffer: string[] = []
 
-    ipcMain.on('terminal-keystroke', (event, key: string) => {
+    ipcMain.on('terminal-keystroke', (_event, key: string) => {
         if (/^\w+$/.test(key)) {
             stdinBuffer.push(key);
         }

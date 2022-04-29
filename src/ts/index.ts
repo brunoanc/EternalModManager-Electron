@@ -51,7 +51,7 @@ const onlineSafeModNameKeywords = [
 const unsafeResourceNameKeywords = ['gameresources', 'pvp', 'shell', 'warehouse'];
 
 // Check if mod is online safe
-function isOnlineSafe(modPath: string): boolean {
+function isModOnlineSafe(modPath: string): boolean {
     let isSafe = true;
     let isModifyingUnsafeResource = false;
     const assetsInfoJsons: IZipEntry[] = [];
@@ -166,7 +166,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
 
         if (eternalModJson) {
             const json = JSON.parse(modZip.readAsText(eternalModJson));
-            modInfo = new ModInfo(json.name, true, isOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
+            modInfo = new ModInfo(json.name, true, isModOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
         }
         else {
             throw new Error('No EternalMod JSON found.');
@@ -177,7 +177,7 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
             modInfo = new ModInfo(modFile, false, false);
         }
         else {
-            modInfo = new ModInfo(modFile, true, isOnlineSafe(modPath));
+            modInfo = new ModInfo(modFile, true, isModOnlineSafe(modPath));
         }
     }
 
@@ -353,7 +353,7 @@ function initWatcher(): void {
         watcherReady = true;
     });
 
-    watcher.on('all', (event, filePath) => {
+    watcher.on('all', (_event, filePath) => {
         if (!watcherReady) {
             return;
         }

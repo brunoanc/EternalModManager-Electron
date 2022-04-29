@@ -8,6 +8,7 @@
     user-select: none;
     cursor: default;
 }
+
 input, button, textarea, :focus {
     outline: none;
 }
@@ -15,11 +16,10 @@ input, button, textarea, :focus {
 /* disable image and anchor dragging */
 a:not([draggable=true]), img:not([draggable=true]) {
     -webkit-user-drag: none;
-    user-drag: none;
 }
+
 a[href^="http://"],
 a[href^="https://"],
 a[href^="ftp://"] {
     -webkit-user-drag: auto;
-    user-drag: auto;
 }
