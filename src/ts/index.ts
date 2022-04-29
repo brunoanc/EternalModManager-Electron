@@ -164,13 +164,12 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
         const modZip = new admZip(modPath);
         const eternalModJson = modZip.getEntry('EternalMod.json');
 
-        if (eternalModJson) {
-            const json = JSON.parse(modZip.readAsText(eternalModJson));
-            modInfo = new ModInfo(json.name, true, isModOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
-        }
-        else {
+        if (!eternalModJson) {
             throw new Error('No EternalMod JSON found.');
         }
+
+        const json = JSON.parse(modZip.readAsText(eternalModJson));
+        modInfo = new ModInfo(json.name, true, isModOnlineSafe(modPath), json.author, json.description, json.version, json.loadPriority, json.requiredVersion);
     }
     catch (err) {
         if ((err as Error).message === 'Invalid or unsupported zip format. No END header found') {
@@ -188,26 +187,15 @@ function loadModIntoFragment(fragment: DocumentFragment, mod: string[]): void {
     modCheckbox.checked = mod[1] === 'mod';
 
     modCheckbox.addEventListener('change', (event: Event) => {
-        let isChecked = true;
-        let src = path.join(disabledModsPath, modFile);
-        let dest = path.join(modsPath, modFile);
+        let isChecked = (event.currentTarget as HTMLInputElement).checked;
+        let src = path.join(isChecked ? disabledModsPath : modsPath, modFile);
+        let dest = path.join(isChecked ? modsPath : disabledModsPath, modFile);
 
-        if (!(event.currentTarget as HTMLInputElement).checked) {
-            isChecked = false;
-            src = path.join(modsPath, modFile);
-            dest = path.join(disabledModsPath, modFile);
-        }
-
-        try {
-            fs.rename(src, dest, (err) => {
-                if (err) {
-                    throw err;
-                }
-            });
-        }
-        catch (err) {
-            (event.currentTarget! as HTMLInputElement).checked = !isChecked;
-        }
+        fs.rename(src, dest, (err) => {
+            if (err) {
+                (event.currentTarget! as HTMLInputElement).checked = !isChecked;
+            }
+        });
     });
 
     // Create mod text
