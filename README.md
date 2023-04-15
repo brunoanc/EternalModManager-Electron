@@ -1,5 +1,5 @@
 # DEPRECATED
-Use <https://github.com/PowerBall253/EternalModManager-Avalonia> instead.
+Use <https://github.com/PowerBall253/EternalModManager> instead.
 
 # EternalModManager
 [![Build](https://github.com/PowerBall253/EternalModManager/actions/workflows/build.yml/badge.svg)](https://github.com/PowerBall253/EternalModManager/actions/workflows/build.yml)
